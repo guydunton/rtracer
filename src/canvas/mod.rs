@@ -1,12 +1,12 @@
-mod color;
 mod canvas;
 mod canvas_writer;
+mod color;
 
 // Exports
-pub use color::Color;
 pub use canvas::Canvas;
 pub use canvas_writer::save_canvas;
+pub use color::Color;
 
 // Tests
-mod color_test;
 mod canvas_test;
+mod color_test;

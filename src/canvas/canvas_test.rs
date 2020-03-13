@@ -29,10 +29,10 @@ mod canvas_test {
 
             let save_buffer = c.get_save_buffer();
             let expected_buffer = vec![
-                255, 0, 0, 255, 
-                0, 0, 0, 255, 
+                255, 0, 0, 255,
                 0, 0, 0, 255,
-                255, 0, 0, 255, 
+                0, 0, 0, 255,
+                255, 0, 0, 255,
             ];
 
             assert_eq!(save_buffer, expected_buffer);

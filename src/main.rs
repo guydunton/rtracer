@@ -1,7 +1,7 @@
 mod canvas;
 mod maths;
 
-use canvas::{Canvas, Color, save_canvas};
+use canvas::{save_canvas, Canvas, Color};
 
 fn main() {
     let mut canvas = Canvas::new(128, 128);
