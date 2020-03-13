@@ -1,5 +1,7 @@
 use super::matrix_methods::MatrixMethods;
+use std::cmp::PartialEq;
 
+#[derive(Debug)]
 pub struct Matrix2x2 {
     data: [f64; 4],
 }
@@ -12,7 +14,16 @@ impl Matrix2x2 {
     }
 
     pub fn at(&self, row: usize, col: usize) -> f64 {
-        let props = MatrixMethods::new(&self.data, 2);
-        props.at(row, col)
+        self.methods().at(row, col)
+    }
+
+    fn methods(&self) -> MatrixMethods {
+        MatrixMethods::new(&self.data, 2)
+    }
+}
+
+impl PartialEq for Matrix2x2 {
+    fn eq(&self, rhs: &Matrix2x2) -> bool {
+        self.methods() == rhs.methods()
     }
 }
