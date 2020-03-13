@@ -1,7 +1,8 @@
-pub mod tuple;
-
 mod float_compare;
+mod tuple;
 
-mod tuple_test;
-
+// Exports
 pub use tuple::Tuple;
+
+// Tests
+mod tuple_test;
