@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod matrix_test {
-    use super::super::{Matrix2x2, Matrix3x3, Matrix4x4};
+    use super::super::{Matrix2x2, Matrix3x3, Matrix4x4, Tuple};
     use rust_catch::tests;
 
     tests! {
@@ -90,6 +90,49 @@ mod matrix_test {
             );
 
             assert_eq!(a * b, expected);
+        }
+
+        test("Matrices can be multiplied by a tuple") {
+            let m = Matrix4x4::new(
+                1.0, 2.0, 3.0, 4.0,
+                2.0, 4.0, 4.0, 2.0,
+                8.0, 6.0, 4.0, 1.0,
+                0.0, 0.0, 0.0, 1.0
+            );
+
+            let t = Tuple::new(1.0, 2.0, 3.0, 1.0);
+
+            assert_eq!(m * t, Tuple::new(18.0, 24.0, 33.0, 1.0));
+        }
+
+        test("Multiplying a by identity returns a") {
+            let a = Matrix4x4::new(
+                0.0, 1.0, 2.0, 4.0,
+                1.0, 2.0, 4.0, 8.0,
+                2.0, 4.0, 8.0, 16.0,
+                4.0, 8.0, 16.0, 32.0
+            );
+
+            let id = Matrix4x4::identity();
+            assert_eq!(a * id, a);
+        }
+
+        test("Matrices can be transposed") {
+            let a = Matrix4x4::new(
+                0.0, 9.0, 3.0, 0.0,
+                9.0, 8.0, 0.0, 8.0,
+                1.0, 8.0, 5.0, 3.0,
+                0.0, 0.0, 5.0, 8.0,
+            );
+
+            let expected = Matrix4x4::new(
+                0.0, 9.0, 1.0, 0.0,
+                9.0, 8.0, 8.0, 0.0,
+                3.0, 0.0, 5.0, 5.0,
+                0.0, 8.0, 3.0, 8.0,
+            );
+
+            assert_eq!(a.transpose(), expected);
         }
     }
 }

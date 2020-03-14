@@ -1,7 +1,7 @@
 use super::matrix_methods::MatrixMethods;
 use std::cmp::PartialEq;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Matrix2x2 {
     data: [f64; 4],
 }

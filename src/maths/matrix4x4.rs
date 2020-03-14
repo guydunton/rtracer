@@ -1,8 +1,9 @@
 use super::matrix_methods::MatrixMethods;
+use super::Tuple;
 use std::cmp::PartialEq;
 use std::ops::Mul;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Matrix4x4 {
     data: [f64; 16],
 }
@@ -33,6 +34,16 @@ impl Matrix4x4 {
         }
     }
 
+    fn new_empty() -> Matrix4x4 {
+        Matrix4x4 { data: [0.0; 16] }
+    }
+
+    pub fn identity() -> Matrix4x4 {
+        Matrix4x4::new(
+            1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0,
+        )
+    }
+
     pub fn at(&self, row: usize, col: usize) -> f64 {
         self.methods().at(row, col)
     }
@@ -43,6 +54,22 @@ impl Matrix4x4 {
 
     fn set_at(&mut self, row: usize, col: usize, val: f64) {
         self.data[row * 4 + col] = val;
+    }
+
+    pub fn transpose(&self) -> Matrix4x4 {
+        let mut result = Matrix4x4::new_empty();
+
+        for row in 0..4 {
+            for col in 0..4 {
+                result.set_at(
+                    row,
+                    col,
+                    self.at(col, row), // reverse the row & column
+                );
+            }
+        }
+
+        result
     }
 }
 
@@ -55,7 +82,7 @@ impl PartialEq for Matrix4x4 {
 impl Mul for Matrix4x4 {
     type Output = Self;
     fn mul(self, rhs: Matrix4x4) -> Matrix4x4 {
-        let mut output = Matrix4x4 { data: [0.0; 16] };
+        let mut output = Matrix4x4::new_empty();
 
         for row in 0..4 {
             for col in 0..4 {
@@ -68,5 +95,19 @@ impl Mul for Matrix4x4 {
         }
 
         output
+    }
+}
+
+impl Mul<Tuple> for Matrix4x4 {
+    type Output = Tuple;
+    fn mul(self, rhs: Tuple) -> Tuple {
+        let val_at_row = |row| {
+            self.at(row, 0) * rhs.x()
+                + self.at(row, 1) * rhs.y()
+                + self.at(row, 2) * rhs.z()
+                + self.at(row, 3) * rhs.w()
+        };
+
+        Tuple::new(val_at_row(0), val_at_row(1), val_at_row(2), val_at_row(3))
     }
 }
