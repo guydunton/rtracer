@@ -1,3 +1,7 @@
+// This is a library to the code won't be used yet
+#![allow(dead_code)]
+
+// Code files
 mod canvas;
 mod canvas_writer;
 mod color;
