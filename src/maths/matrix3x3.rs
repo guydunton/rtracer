@@ -1,4 +1,5 @@
 use super::matrix_methods::MatrixMethods;
+use super::Matrix2x2;
 use std::cmp::PartialEq;
 
 #[derive(Debug, Clone, Copy)]
@@ -29,6 +30,21 @@ impl Matrix3x3 {
 
     fn methods(&self) -> MatrixMethods {
         MatrixMethods::new(&self.data, 3)
+    }
+
+    pub fn submatrix(&self, row: usize, col: usize) -> Matrix2x2 {
+        let mut data = Vec::new();
+        data.reserve(4);
+
+        for current_row in 0..3 {
+            for current_col in 0..3 {
+                if current_row != row && current_col != col {
+                    data.push(self.at(current_row, current_col));
+                }
+            }
+        }
+
+        Matrix2x2::new_from_slice(&data[..])
     }
 }
 

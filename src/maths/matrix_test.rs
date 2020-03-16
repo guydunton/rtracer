@@ -134,5 +134,29 @@ mod matrix_test {
 
             assert_eq!(a.transpose(), expected);
         }
+
+        test("We can calculate the determinant of a 2x2 matrix") {
+            let m = Matrix2x2::new(
+                1.0, 5.0,
+                -3.0, 2.0
+            );
+
+            assert_eq!(m.determinant(), 17.0);
+        }
+
+        test("Create a submatrix from a 3x3 matrix") {
+            let m = Matrix3x3::new(
+                1.0, 5.0, 0.0,
+                -3.0, 2.0, 7.0,
+                0.0, 6.0, -3.0
+            );
+
+            let result = Matrix2x2::new(
+                -3.0, 2.0,
+                0.0, 6.0
+            );
+
+            assert_eq!(m.submatrix(0, 2), result);
+        }
     }
 }
