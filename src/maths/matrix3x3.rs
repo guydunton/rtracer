@@ -1,6 +1,7 @@
 use super::matrix_methods::MatrixMethods;
 use super::Matrix2x2;
 use std::cmp::PartialEq;
+use std::convert::TryInto;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Matrix3x3 {
@@ -24,6 +25,14 @@ impl Matrix3x3 {
         }
     }
 
+    pub fn new_from_slice(data: &[f64]) -> Matrix3x3 {
+        let new_data: [f64; 9] = data
+            .try_into()
+            .expect("Provided slice is wrong length for Matrix2x2");
+
+        Matrix3x3 { data: new_data }
+    }
+
     pub fn at(&self, row: usize, col: usize) -> f64 {
         self.methods().at(row, col)
     }
@@ -33,18 +42,26 @@ impl Matrix3x3 {
     }
 
     pub fn submatrix(&self, row: usize, col: usize) -> Matrix2x2 {
-        let mut data = Vec::new();
-        data.reserve(4);
-
-        for current_row in 0..3 {
-            for current_col in 0..3 {
-                if current_row != row && current_col != col {
-                    data.push(self.at(current_row, current_col));
-                }
-            }
-        }
-
+        let data = MatrixMethods::new(&self.data, 3).submatrix_data(row, col);
         Matrix2x2::new_from_slice(&data[..])
+    }
+
+    pub fn minor(&self, row: usize, col: usize) -> f64 {
+        let sub = self.submatrix(row, col);
+        sub.determinant()
+    }
+
+    pub fn cofactor(&self, row: usize, col: usize) -> f64 {
+        let minor = self.minor(row, col);
+        if row + col % 2 == 0 {
+            minor
+        } else {
+            minor * -1.0
+        }
+    }
+
+    pub fn determinant(&self) -> f64 {
+        (0..3).map(|i| self.at(0, i) * self.cofactor(0, i)).sum()
     }
 }
 

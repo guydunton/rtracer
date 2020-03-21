@@ -1,5 +1,5 @@
 use super::matrix_methods::MatrixMethods;
-use super::Tuple;
+use super::{Matrix3x3, Tuple};
 use std::cmp::PartialEq;
 use std::ops::Mul;
 
@@ -52,7 +52,7 @@ impl Matrix4x4 {
         MatrixMethods::new(&self.data, 4)
     }
 
-    fn set_at(&mut self, row: usize, col: usize, val: f64) {
+    pub fn set_at(&mut self, row: usize, col: usize, val: f64) {
         self.data[row * 4 + col] = val;
     }
 
@@ -70,6 +70,51 @@ impl Matrix4x4 {
         }
 
         result
+    }
+
+    fn submatrix(&self, row: usize, col: usize) -> Matrix3x3 {
+        let data = self.methods().submatrix_data(row, col);
+        Matrix3x3::new_from_slice(&data[..])
+    }
+
+    fn minor(&self, row: usize, col: usize) -> f64 {
+        let sub = self.submatrix(row, col);
+        sub.determinant()
+    }
+
+    pub fn cofactor(&self, row: usize, col: usize) -> f64 {
+        let minor = self.minor(row, col);
+        if (row + col) % 2 == 0 {
+            minor
+        } else {
+            minor * -1.0
+        }
+    }
+
+    pub fn determinant(&self) -> f64 {
+        (0..4).map(|i| self.at(0, i) * self.cofactor(0, i)).sum()
+    }
+
+    pub fn is_invertable(&self) -> bool {
+        self.determinant() != 0.0
+    }
+
+    pub fn inverse(&self) -> Option<Matrix4x4> {
+        if !self.is_invertable() {
+            return None;
+        }
+
+        let mut result = Matrix4x4::new_empty();
+        let determinant = self.determinant();
+
+        for row in 0..4 {
+            for col in 0..4 {
+                let cofactor = self.cofactor(row, col);
+                result.set_at(col, row, cofactor / determinant);
+            }
+        }
+
+        Some(result)
     }
 }
 

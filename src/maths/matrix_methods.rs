@@ -17,6 +17,21 @@ impl<'a> MatrixMethods<'a> {
         }
         self.data[row * self.size + col]
     }
+
+    pub fn submatrix_data(&self, row: usize, col: usize) -> Vec<f64> {
+        let mut data = Vec::new();
+        data.reserve(self.size * self.size);
+
+        for current_row in 0..self.size {
+            for current_col in 0..self.size {
+                if current_row != row && current_col != col {
+                    data.push(self.at(current_row, current_col));
+                }
+            }
+        }
+
+        data
+    }
 }
 
 impl PartialEq for MatrixMethods<'_> {

@@ -1,7 +1,7 @@
 pub fn is_same(a: f64, b: f64) -> bool {
     use std::f64;
     let result = a - b;
-    result.abs() <= f64::EPSILON
+    result.abs() <= (f64::EPSILON * 100.0)
 }
 
 #[test]
