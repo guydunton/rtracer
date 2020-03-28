@@ -2,6 +2,7 @@
 mod matrix_test {
     use super::super::{Matrix2x2, Matrix3x3, Matrix4x4, Tuple};
     use rust_catch::tests;
+    use std::f64::consts::PI;
 
     tests! {
         test("Can construct a matrix4x4") {
@@ -320,6 +321,92 @@ mod matrix_test {
 
             let c = a * b;
             assert_eq!(c * b.inverse().unwrap(), a);
+        }
+
+        test("Multiplying by a translation matrix") {
+            let transform = Matrix4x4::translation(5.0, -3.0, 2.0);
+            let p = Tuple::point(-3.0, 4.0, 5.0);
+
+            assert_eq!(transform * p, Tuple::point(2.0, 1.0, 7.0));
+        }
+
+        test("Multiplying by the inverse of translation matrix") {
+            let transform = Matrix4x4::translation(5.0, -3.0, 2.0);
+            let p = Tuple::point(-3.0, 4.0, 5.0);
+            let inv = transform.inverse().unwrap();
+
+            assert_eq!(inv * p, Tuple::point(-8.0, 7.0, 3.0));
+        }
+
+        test("Translation does not affect vectors") {
+            let transform = Matrix4x4::translation(5.0, -3.0, 2.0);
+            let v = Tuple::vector(-3.0, 4.0, 5.0);
+
+            assert_eq!(transform * v, v);
+        }
+
+        test("apply a scaling matrix to a point") {
+            let transform = Matrix4x4::scaling(2.0, 3.0, 4.0);
+            let p = Tuple::point(-4.0, 6.0, 8.0);
+
+            assert_eq!(transform * p, Tuple::point(-8.0, 18.0, 32.0));
+        }
+
+        test("apply a scaling matrix to a vector") {
+            let transform = Matrix4x4::scaling(2.0, 3.0, 4.0);
+            let p = Tuple::vector(-4.0, 6.0, 8.0);
+
+            assert_eq!(transform * p, Tuple::vector(-8.0, 18.0, 32.0));
+        }
+
+        test("Multiply by the inverse of a scaling matrix") {
+            let transform = Matrix4x4::scaling(2.0, 3.0, 4.0);
+            let inv = transform.inverse().unwrap();
+            let v = Tuple::vector(-4.0, 6.0, 8.0);
+
+            assert_eq!(inv * v, Tuple::vector(-2.0, 2.0, 2.0));
+        }
+
+        test("reflection is scaling by a negative value") {
+            let transform = Matrix4x4::scaling(-1.0, 1.0, 1.0);
+            let p = Tuple::point(2.0, 3.0, 4.0);
+
+            assert_eq!(transform * p, Tuple::point(-2.0, 3.0, 4.0));
+        }
+
+        test("Rotating a point around the x axis") {
+            let p = Tuple::point(0.0, 1.0, 0.0);
+            let half_quarter = Matrix4x4::rotate_x(PI / 4.0);
+            let full_quarter = Matrix4x4::rotate_x(PI / 2.0);
+
+            assert_eq!(half_quarter * p, Tuple::point(0.0, 2f64.sqrt() / 2.0, 2f64.sqrt() / 2.0));
+            assert_eq!(full_quarter * p, Tuple::point(0.0, 0.0, 1.0));
+        }
+
+        test("Inverse of x rotation works in opposite direction") {
+            let p = Tuple::point(0.0, 1.0, 0.0);
+            let half_quarter = Matrix4x4::rotate_x(PI / 4.0);
+            let inverse = half_quarter.inverse().unwrap();
+
+            assert_eq!(inverse * p, Tuple::point(0.0, 2f64.sqrt() / 2.0, -2f64.sqrt() / 2.0));
+        }
+
+        test("Rotate around the y axis") {
+            let p = Tuple::point(0.0, 0.0, 1.0);
+            let half_quarter = Matrix4x4::rotate_y(PI / 4.0);
+            let full_quarter = Matrix4x4::rotate_y(PI / 2.0);
+
+            assert_eq!(half_quarter * p, Tuple::point(2f64.sqrt() / 2.0, 0.0, 2f64.sqrt() / 2.0));
+            assert_eq!(full_quarter * p, Tuple::point(1.0, 0.0, 0.0));
+        }
+
+        test("Rotate around the z axis") {
+            let p = Tuple::point(0.0, 1.0, 0.0);
+            let half_quarter = Matrix4x4::rotate_z(PI / 4.0);
+            let full_quarter = Matrix4x4::rotate_z(PI / 2.0);
+
+            assert_eq!(half_quarter * p, Tuple::point(-2f64.sqrt() / 2.0, 2f64.sqrt() / 2.0, 0.0));
+            assert_eq!(full_quarter * p, Tuple::point(-1.0, 0.0, 0.0));
         }
     }
 

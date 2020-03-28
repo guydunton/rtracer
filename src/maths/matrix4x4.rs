@@ -44,6 +44,95 @@ impl Matrix4x4 {
         )
     }
 
+    pub fn translation(x: f64, y: f64, z: f64) -> Matrix4x4 {
+        let mut identity = Self::identity();
+        identity.set_at(0, 3, x);
+        identity.set_at(1, 3, y);
+        identity.set_at(2, 3, z);
+        identity
+    }
+
+    pub fn scaling(x: f64, y: f64, z: f64) -> Matrix4x4 {
+        Self::new(
+            x, 0.0, 0.0, 0.0, 0.0, y, 0.0, 0.0, 0.0, 0.0, z, 0.0, 0.0, 0.0, 0.0, 1.0,
+        )
+    }
+
+    pub fn rotate_x(radians: f64) -> Matrix4x4 {
+        Self::new(
+            // Row 1
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            // Row 2
+            0.0,
+            radians.cos(),
+            -radians.sin(),
+            0.0,
+            // Row 3
+            0.0,
+            radians.sin(),
+            radians.cos(),
+            0.0,
+            // Row 4
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+        )
+    }
+
+    pub fn rotate_y(radians: f64) -> Matrix4x4 {
+        Self::new(
+            // Row 1
+            radians.cos(),
+            0.0,
+            radians.sin(),
+            0.0,
+            // Row 2
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            // Row 3
+            -radians.sin(),
+            0.0,
+            radians.cos(),
+            0.0,
+            // Row 4
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+        )
+    }
+
+    pub fn rotate_z(radians: f64) -> Matrix4x4 {
+        Self::new(
+            // Row 1
+            radians.cos(),
+            -radians.sin(),
+            0.0,
+            0.0,
+            // Row 2
+            radians.sin(),
+            radians.cos(),
+            0.0,
+            0.0,
+            // Row 3
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            // Row 4
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+        )
+    }
+
     pub fn at(&self, row: usize, col: usize) -> f64 {
         self.methods().at(row, col)
     }
