@@ -25,6 +25,26 @@ impl Color {
     pub fn b(&self) -> f64 {
         self.data.z()
     }
+
+    pub fn white() -> Color {
+        Color::new(1.0, 1.0, 1.0)
+    }
+
+    pub fn red() -> Color {
+        Color::new(1.0, 0.0, 0.0)
+    }
+
+    pub fn green() -> Color {
+        Color::new(0.0, 1.0, 0.0)
+    }
+
+    pub fn blue() -> Color {
+        Color::new(0.0, 0.0, 1.0)
+    }
+
+    pub fn black() -> Color {
+        Color::new(0.0, 0.0, 0.0)
+    }
 }
 
 impl PartialEq for Color {

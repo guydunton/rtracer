@@ -58,7 +58,7 @@ impl Matrix4x4 {
         )
     }
 
-    pub fn rotate_x(radians: f64) -> Matrix4x4 {
+    pub fn rotation_x(radians: f64) -> Matrix4x4 {
         Self::new(
             // Row 1
             1.0,
@@ -83,7 +83,7 @@ impl Matrix4x4 {
         )
     }
 
-    pub fn rotate_y(radians: f64) -> Matrix4x4 {
+    pub fn rotation_y(radians: f64) -> Matrix4x4 {
         Self::new(
             // Row 1
             radians.cos(),
@@ -108,7 +108,7 @@ impl Matrix4x4 {
         )
     }
 
-    pub fn rotate_z(radians: f64) -> Matrix4x4 {
+    pub fn rotation_z(radians: f64) -> Matrix4x4 {
         Self::new(
             // Row 1
             radians.cos(),
@@ -130,6 +130,16 @@ impl Matrix4x4 {
             0.0,
             0.0,
             1.0,
+        )
+    }
+
+    pub fn shearing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Matrix4x4 {
+        Self::new(
+            // Row 1
+            1.0, xy, xz, 0.0, // Row 2
+            yx, 1.0, yz, 0.0, // Row 3
+            zx, zy, 1.0, 0.0, // Row 4
+            0.0, 0.0, 0.0, 1.0,
         )
     }
 
@@ -205,6 +215,26 @@ impl Matrix4x4 {
 
         Some(result)
     }
+
+    pub fn rotate_x(&self, radians: f64) -> Matrix4x4 {
+        Self::rotation_x(radians) * self
+    }
+
+    pub fn rotate_y(&self, radians: f64) -> Matrix4x4 {
+        Self::rotation_y(radians) * self
+    }
+
+    pub fn rotate_z(&self, radians: f64) -> Matrix4x4 {
+        Self::rotation_z(radians) * self
+    }
+
+    pub fn scale(&self, x: f64, y: f64, z: f64) -> Matrix4x4 {
+        Self::scaling(x, y, z) * self
+    }
+
+    pub fn translate(&self, x: f64, y: f64, z: f64) -> Matrix4x4 {
+        Self::translation(x, y, z) * self
+    }
 }
 
 impl PartialEq for Matrix4x4 {
@@ -216,6 +246,25 @@ impl PartialEq for Matrix4x4 {
 impl Mul for Matrix4x4 {
     type Output = Self;
     fn mul(self, rhs: Matrix4x4) -> Matrix4x4 {
+        let mut output = Matrix4x4::new_empty();
+
+        for row in 0..4 {
+            for col in 0..4 {
+                let val = self.at(row, 0) * rhs.at(0, col)
+                    + self.at(row, 1) * rhs.at(1, col)
+                    + self.at(row, 2) * rhs.at(2, col)
+                    + self.at(row, 3) * rhs.at(3, col);
+                output.set_at(row, col, val);
+            }
+        }
+
+        output
+    }
+}
+
+impl Mul<&Matrix4x4> for Matrix4x4 {
+    type Output = Matrix4x4;
+    fn mul(self, rhs: &Matrix4x4) -> Matrix4x4 {
         let mut output = Matrix4x4::new_empty();
 
         for row in 0..4 {

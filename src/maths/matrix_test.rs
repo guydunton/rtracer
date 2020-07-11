@@ -283,7 +283,7 @@ mod matrix_test {
             assert_eq!(b, expected);
         }
 
-        test("Calculat the inverse of a third matrix") {
+        test("Calculate the inverse of a third matrix") {
             let a = Matrix4x4::new(
                 9.0,  3.0,  0.0,  9.0,
                 -5.0, -2.0, -6.0, -3.0,
@@ -376,8 +376,8 @@ mod matrix_test {
 
         test("Rotating a point around the x axis") {
             let p = Tuple::point(0.0, 1.0, 0.0);
-            let half_quarter = Matrix4x4::rotate_x(PI / 4.0);
-            let full_quarter = Matrix4x4::rotate_x(PI / 2.0);
+            let half_quarter = Matrix4x4::rotation_x(PI / 4.0);
+            let full_quarter = Matrix4x4::rotation_x(PI / 2.0);
 
             assert_eq!(half_quarter * p, Tuple::point(0.0, 2f64.sqrt() / 2.0, 2f64.sqrt() / 2.0));
             assert_eq!(full_quarter * p, Tuple::point(0.0, 0.0, 1.0));
@@ -385,7 +385,7 @@ mod matrix_test {
 
         test("Inverse of x rotation works in opposite direction") {
             let p = Tuple::point(0.0, 1.0, 0.0);
-            let half_quarter = Matrix4x4::rotate_x(PI / 4.0);
+            let half_quarter = Matrix4x4::rotation_x(PI / 4.0);
             let inverse = half_quarter.inverse().unwrap();
 
             assert_eq!(inverse * p, Tuple::point(0.0, 2f64.sqrt() / 2.0, -2f64.sqrt() / 2.0));
@@ -393,8 +393,8 @@ mod matrix_test {
 
         test("Rotate around the y axis") {
             let p = Tuple::point(0.0, 0.0, 1.0);
-            let half_quarter = Matrix4x4::rotate_y(PI / 4.0);
-            let full_quarter = Matrix4x4::rotate_y(PI / 2.0);
+            let half_quarter = Matrix4x4::rotation_y(PI / 4.0);
+            let full_quarter = Matrix4x4::rotation_y(PI / 2.0);
 
             assert_eq!(half_quarter * p, Tuple::point(2f64.sqrt() / 2.0, 0.0, 2f64.sqrt() / 2.0));
             assert_eq!(full_quarter * p, Tuple::point(1.0, 0.0, 0.0));
@@ -402,11 +402,51 @@ mod matrix_test {
 
         test("Rotate around the z axis") {
             let p = Tuple::point(0.0, 1.0, 0.0);
-            let half_quarter = Matrix4x4::rotate_z(PI / 4.0);
-            let full_quarter = Matrix4x4::rotate_z(PI / 2.0);
+            let half_quarter = Matrix4x4::rotation_z(PI / 4.0);
+            let full_quarter = Matrix4x4::rotation_z(PI / 2.0);
 
             assert_eq!(half_quarter * p, Tuple::point(-2f64.sqrt() / 2.0, 2f64.sqrt() / 2.0, 0.0));
             assert_eq!(full_quarter * p, Tuple::point(-1.0, 0.0, 0.0));
+        }
+
+        test("A shearing transformation moves x in proportion to y") {
+            let transform = Matrix4x4::shearing(1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+            let p = Tuple::point(2.0, 3.0, 4.0);
+
+            assert_eq!(transform * p, Tuple::point(5.0, 3.0, 4.0));
+        }
+
+        test("Individual transformations are applied in sequence") {
+            let p = Tuple::point(1.0, 0.0, 1.0);
+            let A = Matrix4x4::rotation_x(std::f64::consts::PI / 2.0);
+            let B = Matrix4x4::scaling(5.0, 5.0, 5.0);
+            let C = Matrix4x4::translation(10.0, 5.0, 7.0);
+
+            let p2 = A * p;
+            assert_eq!(p2, Tuple::point(1.0, -1.0, 0.0));
+            let p3 = B * p2;
+            assert_eq!(p3, Tuple::point(5.0, -5.0, 0.0));
+            let p4 = C * p3;
+            assert_eq!(p4, Tuple::point(15.0, 0.0, 7.0));
+        }
+
+        test("Chained transformations must be applied in reverse order") {
+            let p = Tuple::point(1.0, 0.0, 1.0);
+            let A = Matrix4x4::rotation_x(std::f64::consts::PI / 2.0);
+            let B = Matrix4x4::scaling(5.0, 5.0, 5.0);
+            let C = Matrix4x4::translation(10.0, 5.0, 7.0);
+
+            let T = C * B * A;
+            assert_eq!(T * p, Tuple::point(15.0, 0.0, 7.0));
+        }
+
+        test("Chain transformation using fluent api") {
+            let p = Tuple::point(1.0, 0.0, 1.0);
+            let T = Matrix4x4::identity()
+                .rotate_x(std::f64::consts::PI / 2.0)
+                .scale(5.0, 5.0, 5.0)
+                .translate(10.0, 5.0, 7.0);
+            assert_eq!(T * p, Tuple::point(15.0, 0.0, 7.0));
         }
     }
 
