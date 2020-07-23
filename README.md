@@ -5,7 +5,9 @@
 
 A ray tracer build in Rust from the excellent book "The Ray Tracer Challenge" by Jamis Buck ([Link](https://pragprog.com/titles/jbtracer/)).
 
-Currently the project will output a static image (out.png) when ran.
+Currently the project will output a static image (out.png) when ran like the one below.
+
+![The result of chapter 5](images/chapter_5.png)
 
 ## Build, Run & Test
 
