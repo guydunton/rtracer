@@ -1,5 +1,5 @@
 use super::matrix_methods::MatrixMethods;
-use super::{Matrix3x3, Tuple};
+use super::{Matrix3x3, Point, Tuple, Vector};
 use std::cmp::PartialEq;
 use std::ops::Mul;
 
@@ -292,5 +292,19 @@ impl Mul<Tuple> for Matrix4x4 {
         };
 
         Tuple::new(val_at_row(0), val_at_row(1), val_at_row(2), val_at_row(3))
+    }
+}
+
+impl Mul<Vector> for Matrix4x4 {
+    type Output = Vector;
+    fn mul(self, rhs: Vector) -> Vector {
+        Vector::new_from_tuple(self * rhs.data())
+    }
+}
+
+impl Mul<Point> for Matrix4x4 {
+    type Output = Point;
+    fn mul(self, rhs: Point) -> Point {
+        Point::new_from_tuple(self * rhs.data())
     }
 }

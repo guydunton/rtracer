@@ -1,24 +1,74 @@
 mod canvas;
 mod maths;
+mod primitives;
 
 use canvas::{save_canvas, Canvas, Color};
-use maths::{Matrix4x4, Tuple};
+use maths::{Matrix4x4, Point, Vector};
+use primitives::{Intersection, Ray, Shape};
+
+use rayon::prelude::*;
+
+struct ColorResult {
+    pos: (i32, i32),
+    col: Color,
+}
+
+fn calculate_color(
+    (row_addr, col_addr): &(i32, i32),
+    shape: Shape,
+    canvas_size: (i32, i32),
+    camera_size: (f64, f64),
+) -> ColorResult {
+    let row = *row_addr;
+    let col = *col_addr;
+    let ray_origin = Point::new(
+        (col as f64 / canvas_size.0 as f64 * camera_size.0) - (camera_size.0 / 2.0),
+        (row as f64 / canvas_size.1 as f64 * camera_size.1) - (camera_size.1 / 2.0),
+        0.0,
+    );
+
+    // Create a ray
+    let ray = Ray::new(ray_origin, Vector::new(0.0, 0.0, 1.0));
+
+    // Check intersects with sphere
+    let intersects = ray.intersects(shape);
+
+    // If so set the pixel as red
+    let color = if Intersection::hit(intersects).is_some() {
+        Color::red()
+    } else {
+        Color::black()
+    };
+
+    ColorResult {
+        pos: (row, col),
+        col: color,
+    }
+}
 
 fn main() {
-    let mut canvas = Canvas::new(128, 128);
+    let mut canvas = Canvas::new(256, 256);
 
-    let point = Tuple::point(0.0, 0.0, 0.0);
+    let t = Matrix4x4::translation(0.0, 0.0, 5.0).scale(3.0, 3.0, 3.0);
 
-    for i in 0..12 {
-        let m = Matrix4x4::identity()
-            .translate(0.0, 50.0, 0.0)
-            .rotate_z(std::f64::consts::FRAC_PI_6 * i as f64)
-            .translate(128.0 / 2.0, 128.0 / 2.0, 0.0);
+    let shape = Shape::sphere_from_transformation(t);
 
-        let result: Tuple = m * point;
+    // Find the list of points on the canvas
+    let points: Vec<(i32, i32)> = (0..256)
+        .into_iter()
+        .map(|row| (0..256).into_iter().map(move |col| (row, col)))
+        .flatten()
+        .collect();
 
-        canvas.write_pixel(result.x() as i32, result.y() as i32, Color::white());
-    }
+    // for each point calculate the ray
+    let colors: Vec<ColorResult> = points
+        .par_iter()
+        .map(|point| calculate_color(point, shape, (256, 256), (10.0, 10.0)))
+        .collect();
+
+    colors.iter().for_each(|color: &ColorResult| {
+        canvas.write_pixel(color.pos.0, color.pos.1, color.col);
+    });
 
     save_canvas(canvas, "out.png".to_owned()).unwrap();
 }

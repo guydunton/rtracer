@@ -37,18 +37,6 @@ impl Tuple {
         }
     }
 
-    pub fn dot(lhs: Tuple, rhs: Tuple) -> f64 {
-        lhs.x() * rhs.x() + lhs.y() * rhs.y() + lhs.z() * rhs.z() + lhs.w() * rhs.w()
-    }
-
-    pub fn cross(lhs: Tuple, rhs: Tuple) -> Tuple {
-        Tuple::vector(
-            lhs.y() * rhs.z() - lhs.z() * rhs.y(),
-            lhs.z() * rhs.x() - lhs.x() * rhs.z(),
-            lhs.x() * rhs.y() - lhs.y() * rhs.x(),
-        )
-    }
-
     pub fn x(&self) -> f64 {
         self._x
     }
@@ -71,17 +59,6 @@ impl Tuple {
 
     pub fn is_point(&self) -> bool {
         is_same(self.w(), 1.0)
-    }
-
-    pub fn len(&self) -> f64 {
-        f64::sqrt(
-            self.x() * self.x() + self.y() * self.y() + self.z() * self.z() + self.w() * self.w(),
-        )
-    }
-
-    pub fn normalize(&self) -> Tuple {
-        let len = self.len();
-        *self / len
     }
 }
 

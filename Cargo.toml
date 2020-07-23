@@ -8,4 +8,5 @@ edition = "2018"
 
 [dependencies]
 rust-catch = { git = "https://github.com/gdunton/rust-catch", rev = "HEAD" }
-png = "0.16.1"
+png = "0.16.7"
+rayon = "1.3.1"
