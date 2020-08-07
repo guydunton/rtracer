@@ -53,6 +53,22 @@ impl Tuple {
         self._w
     }
 
+    pub fn set_x(&mut self, x: f64) {
+        self._x = x;
+    }
+
+    pub fn set_y(&mut self, y: f64) {
+        self._y = y;
+    }
+
+    pub fn set_z(&mut self, z: f64) {
+        self._z = z;
+    }
+
+    pub fn set_w(&mut self, w: f64) {
+        self._w = w;
+    }
+
     pub fn is_vector(&self) -> bool {
         is_same(self.w(), 0.0)
     }

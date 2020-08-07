@@ -1,13 +1,13 @@
-use super::Shape;
+use super::Sphere;
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Intersection {
     t: f64,
-    shape: Shape,
+    shape: Sphere,
 }
 
 impl Intersection {
-    pub fn new(t: f64, shape: Shape) -> Intersection {
+    pub fn new(t: f64, shape: Sphere) -> Intersection {
         Intersection { t, shape }
     }
 
@@ -15,7 +15,7 @@ impl Intersection {
         self.t
     }
 
-    pub fn object(&self) -> Shape {
+    pub fn object(&self) -> Sphere {
         self.shape
     }
 

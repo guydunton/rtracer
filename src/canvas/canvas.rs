@@ -43,9 +43,9 @@ impl Canvas {
 
         // Convert each color into [u8; 4]
         for pixel in self.pixels.iter() {
-            let r = (pixel.r() * 255.0) as u8;
-            let g = (pixel.g() * 255.0) as u8;
-            let b = (pixel.b() * 255.0) as u8;
+            let r = (pixel.r().min(1.0).max(0.0) * 255.0) as u8;
+            let g = (pixel.g().min(1.0).max(0.0) * 255.0) as u8;
+            let b = (pixel.b().min(1.0).max(0.0) * 255.0) as u8;
             result.push(r);
             result.push(g);
             result.push(b);

@@ -1,5 +1,5 @@
 use super::Tuple;
-use std::ops::{Mul, Sub};
+use std::ops::{Mul, Neg, Sub};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Vector {
@@ -33,6 +33,22 @@ impl Vector {
         self.data.w()
     }
 
+    pub fn set_x(&mut self, x: f64) {
+        self.data.set_x(x);
+    }
+
+    pub fn set_y(&mut self, y: f64) {
+        self.data.set_y(y);
+    }
+
+    pub fn set_z(&mut self, z: f64) {
+        self.data.set_z(z);
+    }
+
+    pub fn set_w(&mut self, w: f64) {
+        self.data.set_w(w);
+    }
+
     pub fn data(&self) -> Tuple {
         self.data
     }
@@ -59,6 +75,10 @@ impl Vector {
         let len = self.len();
         Vector::new_from_tuple(self.data() / len)
     }
+
+    pub fn reflect(&self, normal: Vector) -> Vector {
+        *self - normal * 2.0 * Vector::dot(*self, normal)
+    }
 }
 
 impl Sub for Vector {
@@ -72,5 +92,13 @@ impl Mul<f64> for Vector {
     type Output = Vector;
     fn mul(self, rhs: f64) -> Vector {
         Vector::new_from_tuple(self.data * rhs)
+    }
+}
+
+impl Neg for Vector {
+    type Output = Self;
+
+    fn neg(self) -> Self {
+        Vector::new_from_tuple(-self.data)
     }
 }

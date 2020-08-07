@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod ray_test {
-    use super::super::{Intersection, Ray, Shape};
+    use super::super::{Intersection, Ray, Sphere};
     use crate::{Matrix4x4, Point, Vector};
     use rust_catch::tests;
 
@@ -26,7 +26,7 @@ mod ray_test {
 
         test("A ray intersects a sphere at 2 locations") {
             let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
-            let s = Shape::sphere();
+            let s = Sphere::default();
 
             let intersections = r.intersects(s);
             assert_eq!(intersections[0].t(), 4.0);
@@ -35,7 +35,7 @@ mod ray_test {
 
         test("A ray intersects a sphere at a tangent") {
             let r = Ray::new(Point::new(0.0, 1.0, -5.0), Vector::new(0.0, 0.0, 1.0));
-            let s = Shape::sphere();
+            let s = Sphere::default();
             let i = r.intersects(s);
 
             assert_eq!(i[0].t(), 5.0);
@@ -44,7 +44,7 @@ mod ray_test {
 
         test("A ray misses a sphere") {
             let r = Ray::new(Point::new(0.0, 2.0, -5.0), Vector::new(0.0, 0.0, 1.0));
-            let s = Shape::sphere();
+            let s = Sphere::default();
 
             let i = r.intersects(s);
 
@@ -53,7 +53,7 @@ mod ray_test {
 
         test("A ray originates inside a sphere") {
             let r = Ray::new(Point::new(0.0, 0.0, 0.0), Vector::new(0.0, 0.0, 1.0));
-            let s = Shape::sphere();
+            let s = Sphere::default();
 
             let i = r.intersects(s);
             assert_eq!(i[0].t(), -1.0);
@@ -62,7 +62,7 @@ mod ray_test {
 
         test("A sphere is behind a ray") {
             let r = Ray::new(Point::new(0.0, 0.0, 5.0), Vector::new(0.0, 0.0, 1.0));
-            let s = Shape::sphere();
+            let s = Sphere::default();
 
             let i = r.intersects(s);
             assert_eq!(i[0].t(), -6.0);
@@ -72,7 +72,7 @@ mod ray_test {
         }
 
         test("An intersection encapsulates t and object") {
-            let s = Shape::sphere();
+            let s = Sphere::default();
             let i = Intersection::new(3.5, s);
 
             assert_eq!(i.t(), 3.5);
@@ -80,7 +80,7 @@ mod ray_test {
         }
 
         test("The hit when all intersections have positive t") {
-            let s = Shape::sphere();
+            let s = Sphere::default();
             let i1 = Intersection::new(1.0, s);
             let i2 = Intersection::new(2.0, s);
 
@@ -91,7 +91,7 @@ mod ray_test {
         }
 
         test("The hit when some intersections have negative t") {
-            let s = Shape::sphere();
+            let s = Sphere::default();
             let i1 = Intersection::new(-1.0, s);
             let i2 = Intersection::new(1.0, s);
 
@@ -102,7 +102,7 @@ mod ray_test {
         }
 
         test("The hit when all intersections have negative t") {
-            let s = Shape::sphere();
+            let s = Sphere::default();
             let i1 = Intersection::new(-2.0, s);
             let i2 = Intersection::new(-1.0, s);
 
@@ -113,7 +113,7 @@ mod ray_test {
         }
 
         test("The hit is always the lowest nonnegative intersection") {
-            let s = Shape::sphere();
+            let s = Sphere::default();
             let i1 = Intersection::new(5.0, s);
             let i2 = Intersection::new(7.0, s);
             let i3 = Intersection::new(-3.0, s);
@@ -142,20 +142,20 @@ mod ray_test {
         }
 
         test("A spheres default transformation") {
-            let s = Shape::sphere();
+            let s = Sphere::default();
             assert_eq!(s.transformation(), Matrix4x4::identity());
         }
 
         test("Set a spheres transformation") {
             let t = Matrix4x4::translation(2.0, 3.0, 4.0);
-            let s2 = Shape::sphere_from_transformation(t);
+            let s2 = Sphere::sphere_from_transformation(t);
 
             assert_eq!(s2.transformation(), t);
         }
 
         test("Intersecting a scaled sphere with a ray") {
             let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
-            let s = Shape::sphere_from_transformation(Matrix4x4::scaling(2.0, 2.0, 2.0));
+            let s = Sphere::sphere_from_transformation(Matrix4x4::scaling(2.0, 2.0, 2.0));
 
             let intersections = r.intersects(s);
 
@@ -166,7 +166,7 @@ mod ray_test {
 
         test("Intersecting a translated sphere with a ray") {
             let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
-            let s = Shape::sphere_from_transformation(Matrix4x4::translation(5.0, 0.0, 0.0));
+            let s = Sphere::sphere_from_transformation(Matrix4x4::translation(5.0, 0.0, 0.0));
 
             let intersections = r.intersects(s);
 

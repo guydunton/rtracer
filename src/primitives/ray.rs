@@ -1,6 +1,6 @@
 // This is a library to the code won't be used yet
 #![allow(dead_code)]
-use super::{Intersection, Shape};
+use super::{Intersection, Sphere};
 use crate::{
     maths::{Matrix4x4, Vector},
     Point,
@@ -28,7 +28,7 @@ impl Ray {
         self.origin + self.direction * time
     }
 
-    pub fn intersects(&self, shape: Shape) -> Vec<Intersection> {
+    pub fn intersects(&self, shape: Sphere) -> Vec<Intersection> {
         let ray2 = self.transform(shape.transformation().inverse().unwrap());
         let sphere_to_ray = ray2.origin - Point::new(0.0, 0.0, 0.0);
         let a = Vector::dot(ray2.direction, ray2.direction);

@@ -134,5 +134,27 @@ mod tuple_test {
             assert_eq!(Vector::cross(v1, v2), Vector::new(-1.0, 2.0, -1.0));
             assert_eq!(Vector::cross(v2, v1), Vector::new(1.0, -2.0, 1.0));
         }
+
+        test("Reflecting a vector approaching at 45") {
+            let v = Vector::new(1.0, -1.0, 0.0);
+            let n = Vector::new(0.0, 1.0, 0.0);
+
+            assert_eq!(v.reflect(n), Vector::new(1.0, 1.0, 0.0));
+        }
+
+        test("Reflecting a vector off a slanted surface") {
+            let v = Vector::new(0.0, -1.0, 0.0);
+            let fraq = 2f64.sqrt() / 2.0;
+            let n = Vector::new(fraq, fraq, 0.0);
+
+            let r = v.reflect(n);
+            assert_eq!(r, Vector::new(1.0, 0.0, 0.0));
+        }
+
+        test("Can negate a vector") {
+            let v = Vector::new(1.0, -2.0, 3.0);
+
+            assert_eq!(-v, Vector::new(-1.0, 2.0, -3.0));
+        }
     }
 }
