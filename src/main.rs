@@ -4,7 +4,7 @@ mod primitives;
 
 use canvas::{save_canvas, Canvas, Color};
 use maths::{Matrix4x4, Point, Vector};
-use primitives::{Intersection, Material, PointLight, Ray, Sphere};
+use primitives::{Intersection, Material, PointLight, Ray, Sphere, World};
 
 use rayon::prelude::*;
 

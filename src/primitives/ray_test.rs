@@ -173,4 +173,18 @@ mod ray_test {
             assert_eq!(intersections.len(), 0);
         }
     }
+
+    #[test]
+    fn precomputing_the_state_of_an_intersection() {
+        let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
+        let shape = Sphere::default();
+        let i = Intersection::new(4.0, shape);
+
+        let comps = i.prepare_computations(r);
+        assert_eq!(comps.t(), i.t());
+        assert_eq!(comps.object(), i.object());
+        assert_eq!(comps.point(), Vector::new(0.0, 0.0, -1.0));
+        assert_eq!(comps.eyev(), Vector::new(0.0, 0.0, -1.0));
+        assert_eq!(comps.normalv(), Vector::new(0.0, 0.0, -1.0));
+    }
 }

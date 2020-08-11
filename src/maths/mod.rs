@@ -12,6 +12,7 @@ mod tuple;
 mod vector;
 
 // Exports
+pub use float_compare::is_same;
 pub use matrix2x2::Matrix2x2;
 pub use matrix3x3::Matrix3x3;
 pub use matrix4x4::Matrix4x4;
