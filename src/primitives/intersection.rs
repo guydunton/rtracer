@@ -1,4 +1,5 @@
-use super::Sphere;
+use super::{IntersectionStats, Ray, Sphere};
+use crate::maths::Vector;
 use std::cmp::{Ord, Ordering};
 
 #[derive(Debug, Copy, Clone)]
@@ -30,6 +31,22 @@ impl Intersection {
         // Exclude all the t values < 0
         // return the first value left, if any
         intersections.into_iter().filter(|a| a.t() >= 0.0).nth(0)
+    }
+
+    pub fn prepare_computations(&self, ray: Ray) -> IntersectionStats {
+        let point = ray.position(self.t);
+        let eyev = -ray.direction();
+        let mut normalv = self.object().normal_at(point);
+
+        let inside;
+        if Vector::dot(normalv, eyev) < 0.0 {
+            inside = true;
+            normalv = -normalv;
+        } else {
+            inside = false;
+        }
+
+        IntersectionStats::new(self.t, self.shape, point, eyev, normalv, inside)
     }
 }
 

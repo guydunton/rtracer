@@ -1,4 +1,4 @@
-use super::{Intersection, Material, PointLight, Ray, Sphere};
+use super::{Intersection, IntersectionStats, Material, PointLight, Ray, Sphere};
 use crate::{
     canvas::Color,
     maths::{Matrix4x4, Point},
@@ -28,6 +28,34 @@ impl WorldImpl {
         f.sort_unstable();
         f
     }
+
+    pub fn shade_hit(&self, comps: IntersectionStats) -> Color {
+        self.lights
+            .iter()
+            .map(|light| {
+                comps.object().material().lighting(
+                    *light,
+                    comps.point(),
+                    comps.eyev(),
+                    comps.normalv(),
+                )
+            })
+            .fold(Color::black(), |total, col| total + col)
+    }
+
+    pub fn color_at(&self, ray: Ray) -> Color {
+        let intersections = self.ray_intersects(ray.clone());
+
+        let hit = Intersection::hit(intersections);
+
+        match hit {
+            Some(intersection) => {
+                let comps = intersection.prepare_computations(ray);
+                self.shade_hit(comps)
+            }
+            None => Color::black(),
+        }
+    }
 }
 
 /// World is a builder for WorldImpl
@@ -51,6 +79,11 @@ impl World {
         }
     }
 
+    pub fn reset_lights(mut self) -> Self {
+        self.lights = vec![];
+        self
+    }
+
     pub fn add_light(mut self, light: PointLight) -> Self {
         self.lights.push(light);
         self
@@ -61,7 +94,7 @@ impl World {
         self
     }
 
-    pub fn generate_default() -> WorldImpl {
+    pub fn default() -> World {
         let light = PointLight::new(Point::new(-10.0, 10.0, -10.0), Color::white());
 
         let mut material = Material::default();
@@ -76,6 +109,5 @@ impl World {
             .add_light(light)
             .add_object(sphere1)
             .add_object(sphere2)
-            .generate()
     }
 }
