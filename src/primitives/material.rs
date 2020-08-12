@@ -4,7 +4,7 @@ use crate::{
     maths::{Point, Vector},
 };
 
-#[derive(PartialEq, Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug)]
 pub struct Material {
     pub color: Color,
     pub ambient: f64,
@@ -75,5 +75,16 @@ impl Material {
 
         // Add the three contributions together to get the final shading
         ambient + diffuse + specular
+    }
+}
+
+impl PartialEq for Material {
+    fn eq(&self, other: &Self) -> bool {
+        use crate::maths::is_same;
+        self.color == other.color
+            && is_same(self.ambient, other.ambient)
+            && is_same(self.diffuse, other.diffuse)
+            && is_same(self.specular, other.specular)
+            && is_same(self.shininess, other.shininess)
     }
 }

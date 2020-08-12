@@ -1,7 +1,7 @@
 use crate::canvas::Color;
 use crate::maths::Point;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq, Debug)]
 pub struct PointLight {
     intensity: Color,
     position: Point,

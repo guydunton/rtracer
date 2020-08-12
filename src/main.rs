@@ -2,82 +2,77 @@ mod canvas;
 mod maths;
 mod primitives;
 
-use canvas::{save_canvas, Canvas, Color};
+use canvas::{save_canvas, Color};
 use maths::{Matrix4x4, Point, Vector};
-use primitives::{Intersection, Material, PointLight, Ray, Sphere};
-
-use rayon::prelude::*;
-
-struct ColorResult {
-    pos: (i32, i32),
-    col: Color,
-}
-
-fn calculate_color(
-    (row_addr, col_addr): &(i32, i32),
-    sphere: Sphere,
-    canvas_size: (i32, i32),
-    camera_size: (f64, f64),
-    light: PointLight,
-) -> ColorResult {
-    let row = *row_addr;
-    let col = *col_addr;
-    let ray_origin = Point::new(
-        (col as f64 / canvas_size.0 as f64 * camera_size.0) - (camera_size.0 / 2.0),
-        (row as f64 / canvas_size.1 as f64 * camera_size.1) - (camera_size.1 / 2.0),
-        0.0,
-    );
-
-    // Create a ray
-    let ray = Ray::new(ray_origin, Vector::new(0.0, 0.0, 1.0).normalize());
-
-    // Check intersects with sphere
-    let intersects = ray.intersects(sphere);
-
-    // If so set the pixel color
-    let color = match Intersection::hit(intersects) {
-        Some(hit) => {
-            let point = ray.position(hit.t());
-            let normal = hit.object().normal_at(point);
-            let eye = -ray.direction();
-            hit.object().material().lighting(light, point, eye, normal)
-        }
-        _ => Color::black(),
-    };
-
-    ColorResult {
-        pos: (row, col),
-        col: color,
-    }
-}
+use primitives::{Camera, Material, PointLight, Sphere, World};
 
 fn main() {
-    let mut canvas = Canvas::new(256, 256);
+    // Create the floor
+    let floor_transform = Matrix4x4::scaling(10.0, 0.01, 10.0);
+    let mut floor_mat = Material::default();
+    floor_mat.color = Color::new(1.0, 0.9, 0.9);
+    floor_mat.specular = 0.0;
+    let floor = Sphere::new(floor_transform, floor_mat);
 
-    let t = Matrix4x4::translation(0.0, 0.0, 5.0).scale(4.0, 4.0, 4.0);
+    // Create the left wall
+    let left_wall_transform = Matrix4x4::translation(0.0, 0.0, 5.0)
+        .rotate_y(-std::f64::consts::FRAC_PI_4)
+        .rotate_x(std::f64::consts::FRAC_PI_2)
+        .scale(10.0, 0.01, 10.0);
+    let left_wall = Sphere::new(left_wall_transform, floor_mat);
 
-    let mut material = Material::default();
-    material.color = Color::new(0.2, 0.5, 1.0);
-    let shape = Sphere::new(t, material);
+    // Create the right wall
+    let right_wall_transform = Matrix4x4::translation(0.0, 0.0, 5.0)
+        .rotate_y(std::f64::consts::FRAC_PI_4)
+        .rotate_x(std::f64::consts::FRAC_PI_2)
+        .scale(10.0, 0.01, 10.0);
+    let right_wall = Sphere::new(right_wall_transform, floor_mat);
 
-    let light = PointLight::new(Point::new(-20.0, -30.0, -10.0), Color::white());
+    // Create middle
+    let middle_transform = Matrix4x4::translation(-0.5, 1.0, 0.5);
+    let mut middle_mat = Material::default();
+    middle_mat.color = Color::new(0.1, 1.0, 0.5);
+    middle_mat.diffuse = 0.7;
+    middle_mat.specular = 0.3;
+    let middle = Sphere::new(middle_transform, middle_mat);
 
-    // Find the list of points on the canvas
-    let points: Vec<(i32, i32)> = (0..256)
-        .into_iter()
-        .map(|row| (0..256).into_iter().map(move |col| (row, col)))
-        .flatten()
-        .collect();
+    // Create right
+    let right_transform = Matrix4x4::translation(1.5, 0.5, -0.5).scale(0.5, 0.5, 0.5);
+    let mut right_mat = Material::default();
+    right_mat.color = Color::new(0.5, 1.0, 0.1);
+    right_mat.diffuse = 0.7;
+    right_mat.specular = 0.3;
+    let right = Sphere::new(right_transform, right_mat);
 
-    // for each point calculate the ray
-    let colors: Vec<ColorResult> = points
-        .par_iter()
-        .map(|point| calculate_color(point, shape, (256, 256), (10.0, 10.0), light))
-        .collect();
+    // Create left
+    let left_translation = Matrix4x4::translation(-1.5, 0.33, -0.75).scale(0.33, 0.33, 0.33);
+    let mut left_mat = Material::default();
+    left_mat.color = Color::new(1.0, 0.8, 0.1);
+    left_mat.diffuse = 0.7;
+    left_mat.specular = 0.3;
+    let left = Sphere::new(left_translation, left_mat);
 
-    colors.iter().for_each(|color: &ColorResult| {
-        canvas.write_pixel(color.pos.1, color.pos.0, color.col);
-    });
+    // Create world
+    let world = World::new()
+        .add_light(PointLight::new(
+            Point::new(-10.0, 10.0, -10.0),
+            Color::white(),
+        ))
+        .add_object(floor)
+        .add_object(left_wall)
+        .add_object(right_wall)
+        .add_object(middle)
+        .add_object(right)
+        .add_object(left)
+        .generate();
 
+    let view_transform = Matrix4x4::view(
+        Point::new(0.0, 1.5, -5.0),
+        Point::new(0.0, 1.0, 0.0),
+        Vector::up(),
+    );
+    let camera = Camera::new(512, 256, std::f64::consts::FRAC_PI_3, view_transform);
+
+    let canvas = camera.render(world);
     save_canvas(canvas, "out.png".to_owned()).unwrap();
 }

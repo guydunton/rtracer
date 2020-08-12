@@ -17,6 +17,10 @@ impl Vector {
         Vector { data }
     }
 
+    pub fn up() -> Self {
+        Self::new(0.0, 1.0, 0.0)
+    }
+
     pub fn x(&self) -> f64 {
         self.data.x()
     }
