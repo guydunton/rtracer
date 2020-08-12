@@ -1,3 +1,4 @@
+mod camera;
 mod intersection;
 mod intersection_stats;
 mod material;
@@ -10,6 +11,7 @@ mod shape_test;
 mod world;
 mod world_test;
 
+pub use camera::Camera;
 pub use intersection::Intersection;
 pub use intersection_stats::IntersectionStats;
 pub use material::Material;

@@ -44,7 +44,7 @@ mod shape_test {
 
         test("Computing the normal on a transformed sphere") {
             //let m = Matrix4x4::scaling(1.0, 0.5, 1.0).rotate_z(PI / 5.0);
-            let m = Matrix4x4::rotation_z(PI / 5.0).scale(1.0, 0.5, 1.0);
+            let m = Matrix4x4::scaling(1.0, 0.5, 1.0).rotate_z(PI / 5.0);
             let s = Sphere::sphere_from_transformation(m);
 
             let p = 2f64.sqrt() / 2.0;

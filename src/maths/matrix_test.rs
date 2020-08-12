@@ -1,6 +1,7 @@
 #[cfg(test)]
 mod matrix_test {
     use super::super::{Matrix2x2, Matrix3x3, Matrix4x4, Tuple};
+    use crate::maths::{Point, Vector};
     use rust_catch::tests;
     use std::f64::consts::PI;
 
@@ -443,9 +444,9 @@ mod matrix_test {
         test("Chain transformation using fluent api") {
             let p = Tuple::point(1.0, 0.0, 1.0);
             let T = Matrix4x4::identity()
-                .rotate_x(std::f64::consts::PI / 2.0)
+                .translate(10.0, 5.0, 7.0)
                 .scale(5.0, 5.0, 5.0)
-                .translate(10.0, 5.0, 7.0);
+                .rotate_x(std::f64::consts::PI / 2.0);
             assert_eq!(T * p, Tuple::point(15.0, 0.0, 7.0));
         }
     }
@@ -458,5 +459,35 @@ mod matrix_test {
                 matrix.set_at(row, col, round(matrix.at(row, col)));
             }
         }
+    }
+
+    #[test]
+    fn the_transformation_matrix_for_the_default_orientation() {
+        let from = Point::new(0.0, 0.0, 0.0);
+        let to = Point::new(0.0, 0.0, -1.0);
+        let up = Vector::up();
+
+        let view = Matrix4x4::view(from, to, up);
+        assert_eq!(view, Matrix4x4::identity());
+    }
+
+    #[test]
+    fn a_view_transformation_matrix_looking_in_positive_z_direction() {
+        let from = Point::new(0.0, 0.0, 0.0);
+        let to = Point::new(0.0, 0.0, 1.0);
+        let up = Vector::up();
+
+        let view = Matrix4x4::view(from, to, up);
+        assert_eq!(view, Matrix4x4::scaling(-1.0, 1.0, -1.0));
+    }
+
+    #[test]
+    fn the_view_transformation_moves_the_world() {
+        let from = Point::new(0.0, 0.0, 8.0);
+        let to = Point::new(0.0, 0.0, 0.0);
+        let up = Vector::up();
+
+        let view = Matrix4x4::view(from, to, up);
+        assert_eq!(view, Matrix4x4::translation(0.0, 0.0, -8.0));
     }
 }

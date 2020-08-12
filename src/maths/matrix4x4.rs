@@ -143,6 +143,34 @@ impl Matrix4x4 {
         )
     }
 
+    pub fn view(from: Point, to: Point, up: Vector) -> Self {
+        let forward = (to - from).normalize();
+        let upn = up.normalize();
+        let left = Vector::cross(forward, upn);
+        let true_up = Vector::cross(left, forward);
+
+        let orientation = Matrix4x4::new(
+            left.x(),
+            left.y(),
+            left.z(),
+            0.0, // row 0
+            true_up.x(),
+            true_up.y(),
+            true_up.z(),
+            0.0, // row 1
+            -forward.x(),
+            -forward.y(),
+            -forward.z(),
+            0.0, // row 2
+            0.0,
+            0.0,
+            0.0,
+            1.0, // row 3
+        );
+
+        orientation * Self::translation(-from.x(), -from.y(), -from.z())
+    }
+
     pub fn at(&self, row: usize, col: usize) -> f64 {
         self.methods().at(row, col)
     }
@@ -217,23 +245,23 @@ impl Matrix4x4 {
     }
 
     pub fn rotate_x(&self, radians: f64) -> Matrix4x4 {
-        Self::rotation_x(radians) * self
+        *self * Self::rotation_x(radians)
     }
 
     pub fn rotate_y(&self, radians: f64) -> Matrix4x4 {
-        Self::rotation_y(radians) * self
+        *self * Self::rotation_y(radians)
     }
 
     pub fn rotate_z(&self, radians: f64) -> Matrix4x4 {
-        Self::rotation_z(radians) * self
+        *self * Self::rotation_z(radians)
     }
 
     pub fn scale(&self, x: f64, y: f64, z: f64) -> Matrix4x4 {
-        Self::scaling(x, y, z) * self
+        *self * Self::scaling(x, y, z)
     }
 
     pub fn translate(&self, x: f64, y: f64, z: f64) -> Matrix4x4 {
-        Self::translation(x, y, z) * self
+        *self * Self::translation(x, y, z)
     }
 }
 
