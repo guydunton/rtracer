@@ -95,9 +95,9 @@ impl Camera {
     pub fn render(&self, world: WorldImpl) -> Canvas {
         let mut image = Canvas::new(self.width, self.height);
 
-        let points: Vec<(i32, i32)> = (0..self.height - 1)
+        let points: Vec<(i32, i32)> = (0..self.height)
             .into_iter()
-            .map(|row| (0..self.width - 1).into_iter().map(move |col| (row, col)))
+            .map(|row| (0..self.width).into_iter().map(move |col| (row, col)))
             .flatten()
             .collect();
 

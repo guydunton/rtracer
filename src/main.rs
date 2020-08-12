@@ -10,7 +10,7 @@ fn main() {
     // Create the floor
     let floor_transform = Matrix4x4::scaling(10.0, 0.01, 10.0);
     let mut floor_mat = Material::default();
-    floor_mat.color = Color::new(1.0, 0.9, 0.9);
+    floor_mat.color = Color::new(0.8, 0.7, 0.7);
     floor_mat.specular = 0.0;
     let floor = Sphere::new(floor_transform, floor_mat);
 
@@ -58,6 +58,10 @@ fn main() {
             Point::new(-10.0, 10.0, -10.0),
             Color::white(),
         ))
+        .add_light(PointLight::new(
+            Point::new(10.0, 10.0, 10.0),
+            Color::new(0.7, 1.0, 0.8),
+        ))
         .add_object(floor)
         .add_object(left_wall)
         .add_object(right_wall)
@@ -66,12 +70,15 @@ fn main() {
         .add_object(left)
         .generate();
 
+    let production = true;
+    let (width, height) = if production { (1024, 512) } else { (128, 64) };
+
     let view_transform = Matrix4x4::view(
         Point::new(0.0, 1.5, -5.0),
         Point::new(0.0, 1.0, 0.0),
         Vector::up(),
     );
-    let camera = Camera::new(512, 256, std::f64::consts::FRAC_PI_3, view_transform);
+    let camera = Camera::new(width, height, std::f64::consts::FRAC_PI_3, view_transform);
 
     let canvas = camera.render(world);
     save_canvas(canvas, "out.png".to_owned()).unwrap();
