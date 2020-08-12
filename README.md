@@ -7,7 +7,7 @@ A ray tracer build in Rust from the excellent book "The Ray Tracer Challenge" by
 
 Currently the project will output a static image (out.png) when ran like the one below.
 
-![The result of chapter 7](images/chapter_7.png)
+![The result of chapter 8](images/chapter_8.png)
 
 ## Build, Run & Test
 

@@ -1,7 +1,7 @@
 use super::{Intersection, IntersectionStats, Material, PointLight, Ray, Sphere};
 use crate::{
     canvas::Color,
-    maths::{Matrix4x4, Point},
+    maths::{Matrix4x4, Point, Vector},
 };
 
 pub struct WorldImpl {
@@ -30,14 +30,16 @@ impl WorldImpl {
     }
 
     pub fn shade_hit(&self, comps: IntersectionStats) -> Color {
+        let in_shadow = self.is_shadowed(comps.over_point());
         self.lights
             .iter()
             .map(|light| {
                 comps.object().material().lighting(
                     *light,
-                    comps.point(),
+                    comps.over_point(),
                     comps.eyev(),
                     comps.normalv(),
+                    in_shadow,
                 )
             })
             .fold(Color::black(), |total, col| total + col)
@@ -55,6 +57,24 @@ impl WorldImpl {
             }
             None => Color::black(),
         }
+    }
+
+    pub fn is_shadowed(&self, point: Point) -> bool {
+        self.lights.iter().all(|light| {
+            let v: Vector = light.position() - point;
+            let distance = v.len();
+            let direction = v.normalize();
+
+            let ray = Ray::new(point, direction);
+            let intersections = self.ray_intersects(ray);
+            if let Some(intersection) = Intersection::hit(intersections) {
+                if intersection.t() < distance {
+                    return true;
+                }
+            }
+
+            false
+        })
     }
 }
 

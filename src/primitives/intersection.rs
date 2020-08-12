@@ -46,7 +46,9 @@ impl Intersection {
             inside = false;
         }
 
-        IntersectionStats::new(self.t, self.shape, point, eyev, normalv, inside)
+        let over_point = point + normalv * f32::EPSILON as f64;
+
+        IntersectionStats::new(self.t, self.shape, point, eyev, normalv, inside, over_point)
     }
 }
 

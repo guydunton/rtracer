@@ -132,3 +132,29 @@ fn the_color_with_an_intersection_behind_the_ray() {
 
     assert_eq!(c, material2.color);
 }
+
+#[test]
+fn testing_is_shadowed_at_various_points() {
+    let w = World::default().generate();
+    assert_eq!(w.is_shadowed(Point::new(0.0, 10.0, 0.0)), false);
+    assert_eq!(w.is_shadowed(Point::new(10.0, -10.0, 10.0)), true);
+    assert_eq!(w.is_shadowed(Point::new(-20.0, 20.0, -20.0)), false);
+    assert_eq!(w.is_shadowed(Point::new(-2.0, 2.0, -2.0)), false);
+}
+
+#[test]
+fn shade_hit_is_given_an_intersection_in_shadow() {
+    let s2 = Sphere::sphere_from_transformation(Matrix4x4::translation(0.0, 0.0, 10.0));
+    let w = World::new()
+        .add_light(PointLight::new(Point::new(0.0, 0.0, -10.0), Color::white()))
+        .add_object(Sphere::default())
+        .add_object(s2)
+        .generate();
+
+    let ray = Ray::new(Point::new(0.0, 0.0, 5.0), Vector::new(0.0, 0.0, 1.0));
+    let i = Intersection::new(4.0, s2);
+    let comps = i.prepare_computations(ray);
+
+    let c = w.shade_hit(comps);
+    assert_eq!(c, Color::new(0.1, 0.1, 0.1));
+}

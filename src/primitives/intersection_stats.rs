@@ -9,6 +9,7 @@ pub struct IntersectionStats {
     eyev: Vector,
     normalv: Vector,
     inside: bool,
+    over_point: Point,
 }
 
 impl IntersectionStats {
@@ -19,6 +20,7 @@ impl IntersectionStats {
         eyev: Vector,
         normalv: Vector,
         inside: bool,
+        over_point: Point,
     ) -> Self {
         Self {
             t,
@@ -27,6 +29,7 @@ impl IntersectionStats {
             eyev,
             normalv,
             inside,
+            over_point,
         }
     }
 
@@ -51,5 +54,9 @@ impl IntersectionStats {
 
     pub fn inside(&self) -> bool {
         self.inside
+    }
+
+    pub fn over_point(&self) -> Point {
+        self.over_point
     }
 }

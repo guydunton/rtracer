@@ -58,10 +58,12 @@ fn main() {
             Point::new(-10.0, 10.0, -10.0),
             Color::white(),
         ))
-        .add_light(PointLight::new(
-            Point::new(10.0, 10.0, 10.0),
-            Color::new(0.7, 1.0, 0.8),
-        ))
+        // This second light is currently commented out because shadow calculations
+        // cannot currently be done with multiple lights
+        // .add_light(PointLight::new(
+        //     Point::new(10.0, 10.0, 10.0),
+        //     Color::new(0.7, 1.0, 0.8),
+        // ))
         .add_object(floor)
         .add_object(left_wall)
         .add_object(right_wall)

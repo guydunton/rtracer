@@ -18,7 +18,7 @@ mod material_test {
 
             let light = PointLight::new(Point::new(0.0, 0.0, -10.0), Color::new(1.0, 1.0, 1.0));
 
-            let result = m.lighting(light, position, eyev, normalv);
+            let result = m.lighting(light, position, eyev, normalv, false);
             assert_eq!(result, Color::new(1.9, 1.9, 1.9));
         }
 
@@ -29,7 +29,7 @@ mod material_test {
             let normalv = Vector::new(0.0, 0.0, -1.0);
             let light = PointLight::new(Point::new(0.0, 0.0, -10.0), Color::new(1.0, 1.0, 1.0));
 
-            let result = m.lighting(light, position, eyev, normalv);
+            let result = m.lighting(light, position, eyev, normalv, false);
             assert_eq!(result, Color::new(1.0, 1.0, 1.0));
         }
 
@@ -41,7 +41,7 @@ mod material_test {
             let normalv = Vector::new(0.0, 0.0, -1.0);
             let light = PointLight::new(Point::new(0.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
 
-            let result = m.lighting(light, position, eyev, normalv);
+            let result = m.lighting(light, position, eyev, normalv, false);
             assert_eq!(round(result.r()), 0.7364);
             assert_eq!(round(result.g()), 0.7364);
             assert_eq!(round(result.b()), 0.7364);
@@ -55,7 +55,7 @@ mod material_test {
             let normalv = Vector::new(0.0, 0.0, -1.0);
             let light = PointLight::new(Point::new(0.0, 10.0, -10.0), Color::new(1.0, 1.0, 1.0));
 
-            let result = m.lighting(light, position, eyev, normalv);
+            let result = m.lighting(light, position, eyev, normalv, false);
             assert_eq!(round(result.r()), 1.6364);
             assert_eq!(round(result.g()), 1.6364);
             assert_eq!(round(result.b()), 1.6364);
@@ -69,8 +69,21 @@ mod material_test {
             let normalv = Vector::new(0.0, 0.0, -1.0);
             let light = PointLight::new(Point::new(0.0, 0.0, 10.0), Color::new(1.0, 1.0, 1.0));
 
-            let result = m.lighting(light, position, eyev, normalv);
+            let result = m.lighting(light, position, eyev, normalv, false);
             assert_eq!(result, Color::new(0.1, 0.1, 0.1));
         }
+    }
+
+    #[test]
+    fn lighting_with_the_surface_in_shadow() {
+        let m = Material::default();
+        let position = Point::new(0.0, 0.0, 0.0);
+        let eyev = Vector::new(0.0, 0.0, -1.0);
+        let normalv = Vector::new(0.0, 0.0, -1.0);
+        let light = PointLight::new(Point::new(0.0, 0.0, -10.0), Color::white());
+        let in_shadow = true;
+
+        let result = m.lighting(light, position, eyev, normalv, in_shadow);
+        assert_eq!(result, Color::new(0.1, 0.1, 0.1));
     }
 }

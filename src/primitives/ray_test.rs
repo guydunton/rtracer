@@ -210,4 +210,16 @@ mod ray_test {
         assert_eq!(comps.inside(), true);
         assert_eq!(comps.normalv(), Vector::new(0.0, 0.0, -1.0));
     }
+
+    #[test]
+    fn the_hit_should_offset_the_point() {
+        let ray = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
+        let shape = Sphere::sphere_from_transformation(Matrix4x4::translation(0.0, 0.0, 1.0));
+
+        let i = Intersection::new(5.0, shape);
+        let comps = i.prepare_computations(ray);
+
+        assert!(comps.over_point().z() < (-std::f32::EPSILON as f64 / 2.0));
+        assert!(comps.point().z() > comps.over_point().z());
+    }
 }

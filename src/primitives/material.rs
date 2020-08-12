@@ -30,6 +30,7 @@ impl Material {
         position: Point,
         eyev: Vector,
         normalv: Vector,
+        in_shadow: bool,
     ) -> Color {
         // Combine the surface color with the light's color/intensity
         let effective_color = self.color * light.intensity();
@@ -73,8 +74,13 @@ impl Material {
             }
         }
 
-        // Add the three contributions together to get the final shading
-        ambient + diffuse + specular
+        if in_shadow {
+            // In shadow so only show ambient
+            ambient
+        } else {
+            // Add the three contributions together to get the final shading
+            ambient + diffuse + specular
+        }
     }
 }
 
