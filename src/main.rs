@@ -60,10 +60,10 @@ fn main() {
         ))
         // This second light is currently commented out because shadow calculations
         // cannot currently be done with multiple lights
-        // .add_light(PointLight::new(
-        //     Point::new(10.0, 10.0, 10.0),
-        //     Color::new(0.7, 1.0, 0.8),
-        // ))
+        .add_light(PointLight::new(
+            Point::new(0.0, 5.0, 2.0),
+            Color::new(0.7, 1.0, 0.8),
+        ))
         .add_object(floor)
         .add_object(left_wall)
         .add_object(right_wall)
@@ -72,8 +72,13 @@ fn main() {
         .add_object(left)
         .generate();
 
-    let production = true;
-    let (width, height) = if production { (1024, 512) } else { (128, 64) };
+    // quality 1 == 128 * 64
+    // quality 4 == 1024 * 512
+    let quality_multiplier = 4;
+    let (width, height) = (
+        128 * 2i32.pow(quality_multiplier),
+        64 * 2i32.pow(quality_multiplier),
+    );
 
     let view_transform = Matrix4x4::view(
         Point::new(0.0, 1.5, -5.0),
