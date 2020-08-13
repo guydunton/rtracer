@@ -1,16 +1,17 @@
+// This is a library to the code won't be used yet
+#![allow(dead_code)]
+
+// Code
 mod camera;
 mod intersection;
 mod intersection_stats;
 mod material;
-mod material_test;
 mod point_light;
 mod ray;
-mod ray_test;
 mod shape;
-mod shape_test;
 mod world;
-mod world_test;
 
+// Exports
 pub use camera::Camera;
 pub use intersection::Intersection;
 pub use intersection_stats::IntersectionStats;
@@ -19,3 +20,15 @@ pub use point_light::PointLight;
 pub use ray::Ray;
 pub use shape::Sphere;
 pub use world::World;
+
+// Tests
+#[cfg(test)]
+mod camera_test;
+#[cfg(test)]
+mod material_test;
+#[cfg(test)]
+mod ray_test;
+#[cfg(test)]
+mod shape_test;
+#[cfg(test)]
+mod world_test;

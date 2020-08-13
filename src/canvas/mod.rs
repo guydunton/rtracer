@@ -12,5 +12,7 @@ pub use canvas_writer::save_canvas;
 pub use color::Color;
 
 // Tests
+#[cfg(test)]
 mod canvas_test;
+#[cfg(test)]
 mod color_test;

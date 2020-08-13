@@ -18,7 +18,3 @@ cargo build
 cargo run
 cargo test
 ```
-
-## Tests
-
-The project has built in tests using my testing framework [rust-catch](https://github.com/guydunton/rust-catch).
