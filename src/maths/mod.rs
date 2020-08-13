@@ -21,5 +21,7 @@ pub use tuple::Tuple;
 pub use vector::Vector;
 
 // Tests
+#[cfg(test)]
 mod matrix_test;
+#[cfg(test)]
 mod tuple_test;
