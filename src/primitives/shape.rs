@@ -5,6 +5,7 @@ use crate::maths::{Matrix4x4, Point, Vector};
 pub struct Sphere {
     transform: Matrix4x4,
     material: Material,
+    transformation_inverse: Matrix4x4,
 }
 
 impl Sphere {
@@ -12,6 +13,7 @@ impl Sphere {
         Self {
             transform,
             material,
+            transformation_inverse: transform.inverse().unwrap(),
         }
     }
 
@@ -19,6 +21,7 @@ impl Sphere {
         Self {
             transform: m,
             material: Material::default(),
+            transformation_inverse: m.inverse().unwrap(),
         }
     }
 
@@ -26,6 +29,7 @@ impl Sphere {
         Self {
             transform: Matrix4x4::identity(),
             material: Material::default(),
+            transformation_inverse: Matrix4x4::identity().inverse().unwrap(),
         }
     }
 
@@ -33,12 +37,16 @@ impl Sphere {
         self.transform
     }
 
+    pub fn transformation_inverse(&self) -> Matrix4x4 {
+        self.transformation_inverse
+    }
+
     pub fn material(&self) -> Material {
         self.material
     }
 
     pub fn normal_at(&self, p: Point) -> Vector {
-        let inverse = self.transformation().inverse().unwrap();
+        let inverse = self.transformation_inverse();
 
         let object_point = inverse * p;
         let object_normal = object_point - Point::new(0.0, 0.0, 0.0);

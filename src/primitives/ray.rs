@@ -30,7 +30,7 @@ impl Ray {
     }
 
     pub fn intersects(&self, shape: Sphere) -> Vec<Intersection> {
-        let ray2 = self.transform(shape.transformation().inverse().unwrap());
+        let ray2 = self.transform(shape.transformation_inverse());
         let sphere_to_ray = ray2.origin - Point::new(0.0, 0.0, 0.0);
         let a = Vector::dot(ray2.direction, ray2.direction);
         let b = 2.0 * Vector::dot(ray2.direction, sphere_to_ray);
