@@ -1,3 +1,6 @@
+// This is a library to the code won't be used yet
+#![allow(dead_code)]
+
 // Code
 mod camera;
 mod intersection;
@@ -19,6 +22,8 @@ pub use shape::Sphere;
 pub use world::World;
 
 // Tests
+#[cfg(test)]
+mod camera_test;
 #[cfg(test)]
 mod material_test;
 #[cfg(test)]
