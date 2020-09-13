@@ -1,3 +1,4 @@
+#![allow(clippy::too_many_arguments)]
 use super::matrix_methods::MatrixMethods;
 use super::Matrix2x2;
 use std::cmp::PartialEq;

@@ -1,6 +1,6 @@
 use super::PointLight;
 use crate::{
-    canvas::Color,
+    image::Color,
     maths::{Point, Vector},
 };
 

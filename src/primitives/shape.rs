@@ -19,7 +19,7 @@ impl Shape {
     pub fn sphere_from_transformation(transform: Matrix4x4) -> Self {
         Self {
             shape_type: ShapeType::Sphere,
-            transform: transform,
+            transform,
             material: Material::default(),
             transformation_inverse: transform.inverse().unwrap(),
         }

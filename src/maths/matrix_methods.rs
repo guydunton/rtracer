@@ -46,6 +46,6 @@ impl PartialEq for MatrixMethods<'_> {
             }
         }
 
-        return true;
+        true
     }
 }

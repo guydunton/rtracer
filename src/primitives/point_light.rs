@@ -1,4 +1,4 @@
-use crate::canvas::Color;
+use crate::image::Color;
 use crate::maths::Point;
 
 #[derive(Copy, Clone, PartialEq, Debug)]
