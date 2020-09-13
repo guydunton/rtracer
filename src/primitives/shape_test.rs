@@ -44,7 +44,7 @@ fn computing_the_normal_on_a_translated_sphere() {
 #[test]
 fn computing_the_normal_on_a_transformed_sphere() {
     //let m = Matrix4x4::scaling(1.0, 0.5, 1.0).rotate_z(PI / 5.0);
-    let m = Matrix4x4::scaling(1.0, 0.5, 1.0).rotate_z(PI / 5.0);
+    let m = Matrix4x4::rotation_z(PI / 5.0).scale(1.0, 0.5, 1.0);
     let s = Shape::sphere_from_transformation(m);
 
     let p = 2f64.sqrt() / 2.0;
