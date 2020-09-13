@@ -31,18 +31,13 @@ impl WorldImpl {
 
     pub fn shade_hit(&self, comps: IntersectionStats) -> Color {
         let in_shadow = self.is_shadowed(comps.over_point());
-        self.lights
-            .iter()
-            .map(|light| {
-                comps.object().material().lighting(
-                    *light,
-                    comps.over_point(),
-                    comps.eyev(),
-                    comps.normalv(),
-                    in_shadow,
-                )
-            })
-            .fold(Color::black(), |total, col| total + col)
+        comps.object().material().lighting(
+            &self.lights,
+            comps.over_point(),
+            comps.eyev(),
+            comps.normalv(),
+            in_shadow,
+        )
     }
 
     pub fn color_at(&self, ray: Ray) -> Color {

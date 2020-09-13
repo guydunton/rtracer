@@ -275,19 +275,7 @@ impl PartialEq for Matrix4x4 {
 impl Mul for Matrix4x4 {
     type Output = Self;
     fn mul(self, rhs: Matrix4x4) -> Matrix4x4 {
-        let mut output = Matrix4x4::new_empty();
-
-        for row in 0..4 {
-            for col in 0..4 {
-                let val = self.at(row, 0) * rhs.at(0, col)
-                    + self.at(row, 1) * rhs.at(1, col)
-                    + self.at(row, 2) * rhs.at(2, col)
-                    + self.at(row, 3) * rhs.at(3, col);
-                output.set_at(row, col, val);
-            }
-        }
-
-        output
+        self * &rhs
     }
 }
 

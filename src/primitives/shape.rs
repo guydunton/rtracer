@@ -43,6 +43,15 @@ impl Shape {
         }
     }
 
+    pub fn plane(transform: Matrix4x4, material: Material) -> Self {
+        Shape {
+            shape_type: ShapeType::Plane,
+            transform,
+            transformation_inverse: transform.inverse().unwrap(),
+            material,
+        }
+    }
+
     pub fn default() -> Self {
         Self {
             shape_type: ShapeType::Sphere,

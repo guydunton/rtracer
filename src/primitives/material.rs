@@ -24,9 +24,28 @@ impl Material {
         }
     }
 
+    pub fn ambient_lighting(&self) -> Color {
+        self.color * self.ambient
+    }
+
     pub fn lighting(
         &self,
-        light: PointLight,
+        lights: &Vec<PointLight>,
+        position: Point,
+        eyev: Vector,
+        normalv: Vector,
+        in_shadow: bool,
+    ) -> Color {
+        let ambient_color = self.ambient_lighting();
+        lights
+            .iter()
+            .map(|light| self.internal_lighting(light, position, eyev, normalv, in_shadow))
+            .fold(ambient_color, |total, col| total + col)
+    }
+
+    pub fn internal_lighting(
+        &self,
+        light: &PointLight,
         position: Point,
         eyev: Vector,
         normalv: Vector,
@@ -37,9 +56,6 @@ impl Material {
 
         // Find the direction to the light source
         let lightv = (light.position() - position).normalize();
-
-        // Compute the ambient contribution
-        let ambient = effective_color * self.ambient;
 
         /*
             light_dot_normal represents the cosine of the angle between the light
@@ -76,10 +92,10 @@ impl Material {
 
         if in_shadow {
             // In shadow so only show ambient
-            ambient
+            Color::black()
         } else {
             // Add the three contributions together to get the final shading
-            ambient + diffuse + specular
+            diffuse + specular
         }
     }
 }
