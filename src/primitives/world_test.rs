@@ -1,5 +1,5 @@
 use super::{
-    super::{Material, PointLight, Sphere, World},
+    super::{Material, PointLight, Shape, World},
     Intersection, Ray,
 };
 use crate::{Color, Matrix4x4, Point, Vector};
@@ -21,8 +21,8 @@ fn the_default_world() {
     material.diffuse = 0.7;
     material.specular = 0.2;
 
-    let sphere1 = Sphere::new(Matrix4x4::identity(), material);
-    let sphere2 = Sphere::new(Matrix4x4::scaling(0.5, 0.5, 0.5), Material::default());
+    let sphere1 = Shape::sphere(Matrix4x4::identity(), material);
+    let sphere2 = Shape::sphere(Matrix4x4::scaling(0.5, 0.5, 0.5), Material::default());
 
     let world = World::default().generate();
 
@@ -115,8 +115,8 @@ fn the_color_with_an_intersection_behind_the_ray() {
     let mut material2 = Material::default();
     material2.ambient = 1.0;
 
-    let sphere1 = Sphere::new(Matrix4x4::identity(), material1);
-    let sphere2 = Sphere::new(Matrix4x4::scaling(0.5, 0.5, 0.5), material2);
+    let sphere1 = Shape::sphere(Matrix4x4::identity(), material1);
+    let sphere2 = Shape::sphere(Matrix4x4::scaling(0.5, 0.5, 0.5), material2);
 
     let w = World::new()
         .add_light(PointLight::new(
@@ -144,10 +144,10 @@ fn testing_is_shadowed_at_various_points() {
 
 #[test]
 fn shade_hit_is_given_an_intersection_in_shadow() {
-    let s2 = Sphere::sphere_from_transformation(Matrix4x4::translation(0.0, 0.0, 10.0));
+    let s2 = Shape::sphere_from_transformation(Matrix4x4::translation(0.0, 0.0, 10.0));
     let w = World::new()
         .add_light(PointLight::new(Point::new(0.0, 0.0, -10.0), Color::white()))
-        .add_object(Sphere::default())
+        .add_object(Shape::default())
         .add_object(s2)
         .generate();
 

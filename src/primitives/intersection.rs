@@ -1,15 +1,15 @@
-use super::{IntersectionStats, Ray, Sphere};
+use super::{IntersectionStats, Ray, Shape};
 use crate::maths::Vector;
 use std::cmp::{Ord, Ordering};
 
 #[derive(Debug, Copy, Clone)]
 pub struct Intersection {
     t: f64,
-    shape: Sphere,
+    shape: Shape,
 }
 
 impl Intersection {
-    pub fn new(t: f64, shape: Sphere) -> Intersection {
+    pub fn new(t: f64, shape: Shape) -> Intersection {
         if t == std::f64::NAN {
             panic!("Intersection does not support NaN t values");
         }
@@ -20,7 +20,7 @@ impl Intersection {
         self.t
     }
 
-    pub fn object(&self) -> Sphere {
+    pub fn object(&self) -> Shape {
         self.shape
     }
 

@@ -1,5 +1,4 @@
-
-use super::{Intersection, Ray, Sphere};
+use super::{Intersection, Ray, Shape};
 use crate::{Matrix4x4, Point, Vector};
 
 #[test]
@@ -26,7 +25,7 @@ fn computing_a_point_from_a_distance() {
 #[test]
 fn a_ray_intersects_a_sphere_at_2_locations() {
     let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
-    let s = Sphere::default();
+    let s = Shape::default();
 
     let intersections = r.intersects(s);
     assert_eq!(intersections[0].t(), 4.0);
@@ -36,7 +35,7 @@ fn a_ray_intersects_a_sphere_at_2_locations() {
 #[test]
 fn a_ray_intersects_a_sphere_at_a_tangent() {
     let r = Ray::new(Point::new(0.0, 1.0, -5.0), Vector::new(0.0, 0.0, 1.0));
-    let s = Sphere::default();
+    let s = Shape::default();
     let i = r.intersects(s);
 
     assert_eq!(i[0].t(), 5.0);
@@ -46,7 +45,7 @@ fn a_ray_intersects_a_sphere_at_a_tangent() {
 #[test]
 fn a_ray_misses_a_sphere() {
     let r = Ray::new(Point::new(0.0, 2.0, -5.0), Vector::new(0.0, 0.0, 1.0));
-    let s = Sphere::default();
+    let s = Shape::default();
 
     let i = r.intersects(s);
 
@@ -56,7 +55,7 @@ fn a_ray_misses_a_sphere() {
 #[test]
 fn a_ray_originates_inside_a_sphere() {
     let r = Ray::new(Point::new(0.0, 0.0, 0.0), Vector::new(0.0, 0.0, 1.0));
-    let s = Sphere::default();
+    let s = Shape::default();
 
     let i = r.intersects(s);
     assert_eq!(i[0].t(), -1.0);
@@ -66,7 +65,7 @@ fn a_ray_originates_inside_a_sphere() {
 #[test]
 fn a_sphere_is_behind_a_ray() {
     let r = Ray::new(Point::new(0.0, 0.0, 5.0), Vector::new(0.0, 0.0, 1.0));
-    let s = Sphere::default();
+    let s = Shape::default();
 
     let i = r.intersects(s);
     assert_eq!(i[0].t(), -6.0);
@@ -77,7 +76,7 @@ fn a_sphere_is_behind_a_ray() {
 
 #[test]
 fn an_intersection_encapsulates_t_and_object() {
-    let s = Sphere::default();
+    let s = Shape::default();
     let i = Intersection::new(3.5, s);
 
     assert_eq!(i.t(), 3.5);
@@ -86,7 +85,7 @@ fn an_intersection_encapsulates_t_and_object() {
 
 #[test]
 fn the_hit_when_all_intersections_have_positive_t() {
-    let s = Sphere::default();
+    let s = Shape::default();
     let i1 = Intersection::new(1.0, s);
     let i2 = Intersection::new(2.0, s);
 
@@ -98,7 +97,7 @@ fn the_hit_when_all_intersections_have_positive_t() {
 
 #[test]
 fn the_hit_when_some_intersections_have_negative_t() {
-    let s = Sphere::default();
+    let s = Shape::default();
     let i1 = Intersection::new(-1.0, s);
     let i2 = Intersection::new(1.0, s);
 
@@ -110,7 +109,7 @@ fn the_hit_when_some_intersections_have_negative_t() {
 
 #[test]
 fn the_hit_when_all_intersections_have_negative_t() {
-    let s = Sphere::default();
+    let s = Shape::default();
     let i1 = Intersection::new(-2.0, s);
     let i2 = Intersection::new(-1.0, s);
 
@@ -122,7 +121,7 @@ fn the_hit_when_all_intersections_have_negative_t() {
 
 #[test]
 fn the_hit_is_always_the_lowest_nonnegative_intersection() {
-    let s = Sphere::default();
+    let s = Shape::default();
     let i1 = Intersection::new(5.0, s);
     let i2 = Intersection::new(7.0, s);
     let i3 = Intersection::new(-3.0, s);
@@ -154,14 +153,14 @@ fn scale_a_ray() {
 
 #[test]
 fn a_spheres_default_transformation() {
-    let s = Sphere::default();
+    let s = Shape::default();
     assert_eq!(s.transformation(), Matrix4x4::identity());
 }
 
 #[test]
 fn set_a_spheres_transformation() {
     let t = Matrix4x4::translation(2.0, 3.0, 4.0);
-    let s2 = Sphere::sphere_from_transformation(t);
+    let s2 = Shape::sphere_from_transformation(t);
 
     assert_eq!(s2.transformation(), t);
 }
@@ -169,7 +168,7 @@ fn set_a_spheres_transformation() {
 #[test]
 fn intersecting_a_scaled_sphere_with_a_ray() {
     let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
-    let s = Sphere::sphere_from_transformation(Matrix4x4::scaling(2.0, 2.0, 2.0));
+    let s = Shape::sphere_from_transformation(Matrix4x4::scaling(2.0, 2.0, 2.0));
 
     let intersections = r.intersects(s);
 
@@ -181,7 +180,7 @@ fn intersecting_a_scaled_sphere_with_a_ray() {
 #[test]
 fn intersecting_a_translated_sphere_with_a_ray() {
     let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
-    let s = Sphere::sphere_from_transformation(Matrix4x4::translation(5.0, 0.0, 0.0));
+    let s = Shape::sphere_from_transformation(Matrix4x4::translation(5.0, 0.0, 0.0));
 
     let intersections = r.intersects(s);
 
@@ -191,7 +190,7 @@ fn intersecting_a_translated_sphere_with_a_ray() {
 #[test]
 fn precomputing_the_state_of_an_intersection() {
     let r = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
-    let shape = Sphere::default();
+    let shape = Shape::default();
     let i = Intersection::new(4.0, shape);
 
     let comps = i.prepare_computations(r);
@@ -205,7 +204,7 @@ fn precomputing_the_state_of_an_intersection() {
 #[test]
 fn the_hit_when_an_intersection_occurs_on_the_outside() {
     let ray = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
-    let shape = Sphere::default();
+    let shape = Shape::default();
     let i = Intersection::new(4.0, shape);
 
     let comps = i.prepare_computations(ray);
@@ -215,7 +214,7 @@ fn the_hit_when_an_intersection_occurs_on_the_outside() {
 #[test]
 fn the_hit_when_an_intersection_occurs_on_the_inside() {
     let ray = Ray::new(Point::new(0.0, 0.0, 0.0), Vector::new(0.0, 0.0, 1.0));
-    let shape = Sphere::default();
+    let shape = Shape::default();
     let i = Intersection::new(1.0, shape);
 
     let comps = i.prepare_computations(ray);
@@ -228,11 +227,38 @@ fn the_hit_when_an_intersection_occurs_on_the_inside() {
 #[test]
 fn the_hit_should_offset_the_point() {
     let ray = Ray::new(Point::new(0.0, 0.0, -5.0), Vector::new(0.0, 0.0, 1.0));
-    let shape = Sphere::sphere_from_transformation(Matrix4x4::translation(0.0, 0.0, 1.0));
+    let shape = Shape::sphere_from_transformation(Matrix4x4::translation(0.0, 0.0, 1.0));
 
     let i = Intersection::new(5.0, shape);
     let comps = i.prepare_computations(ray);
 
     assert!(comps.over_point().z() < (-std::f32::EPSILON as f64 / 2.0));
     assert!(comps.point().z() > comps.over_point().z());
+}
+
+#[test]
+fn intersect_with_a_ray_parallel_to_the_plane() {
+    let p = Shape::plane_default();
+    let r = Ray::new(Point::new(0.0, 10.0, 0.0), Vector::new(0.0, 0.0, 1.0));
+    let xs = r.intersects(p);
+    assert_eq!(xs.len(), 0);
+}
+
+#[test]
+fn intersect_with_a_coplanar_ray() {
+    let p = Shape::plane_default();
+    let r = Ray::new(Point::new(0.0, 0.0, 0.0), Vector::new(0.0, 0.0, 1.0));
+    let xs = r.intersects(p);
+    assert_eq!(xs.len(), 0);
+}
+
+#[test]
+fn a_ray_intersecting_a_plane_from_above() {
+    let p = Shape::plane_default();
+    let r = Ray::new(Point::new(0.0, 1.0, 0.0), Vector::new(0.0, -1.0, 0.0));
+    let xs = r.intersects(p);
+
+    assert_eq!(xs.len(), 1);
+    assert_eq!(xs[0].t(), 1.0);
+    assert_eq!(xs[0].object(), p);
 }
