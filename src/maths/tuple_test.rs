@@ -1,4 +1,3 @@
-
 use super::point::Point;
 use super::vector::Vector;
 use super::Tuple;
