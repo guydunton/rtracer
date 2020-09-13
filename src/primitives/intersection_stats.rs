@@ -1,10 +1,10 @@
-use super::Sphere;
+use super::Shape;
 use crate::maths::{Point, Vector};
 
 #[derive(Copy, Clone, Debug)]
 pub struct IntersectionStats {
     t: f64,
-    object: Sphere,
+    object: Shape,
     point: Point,
     eyev: Vector,
     normalv: Vector,
@@ -15,7 +15,7 @@ pub struct IntersectionStats {
 impl IntersectionStats {
     pub fn new(
         t: f64,
-        object: Sphere,
+        object: Shape,
         point: Point,
         eyev: Vector,
         normalv: Vector,
@@ -36,7 +36,7 @@ impl IntersectionStats {
     pub fn t(&self) -> f64 {
         self.t
     }
-    pub fn object(&self) -> Sphere {
+    pub fn object(&self) -> Shape {
         self.object
     }
 

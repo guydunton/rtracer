@@ -1,4 +1,4 @@
-use super::{Intersection, IntersectionStats, Material, PointLight, Ray, Sphere};
+use super::{Intersection, IntersectionStats, Material, PointLight, Ray, Shape};
 use crate::{
     canvas::Color,
     maths::{Matrix4x4, Point, Vector},
@@ -6,7 +6,7 @@ use crate::{
 
 pub struct WorldImpl {
     lights: Vec<PointLight>,
-    objects: Vec<Sphere>,
+    objects: Vec<Shape>,
 }
 
 impl WorldImpl {
@@ -14,7 +14,7 @@ impl WorldImpl {
         self.lights.clone()
     }
 
-    pub fn objects(&self) -> Vec<Sphere> {
+    pub fn objects(&self) -> Vec<Shape> {
         self.objects.clone()
     }
 
@@ -81,7 +81,7 @@ impl WorldImpl {
 /// World is a builder for WorldImpl
 pub struct World {
     lights: Vec<PointLight>,
-    objects: Vec<Sphere>,
+    objects: Vec<Shape>,
 }
 
 impl World {
@@ -109,7 +109,7 @@ impl World {
         self
     }
 
-    pub fn add_object(mut self, object: Sphere) -> Self {
+    pub fn add_object(mut self, object: Shape) -> Self {
         self.objects.push(object);
         self
     }
@@ -122,8 +122,8 @@ impl World {
         material.diffuse = 0.7;
         material.specular = 0.2;
 
-        let sphere1 = Sphere::new(Matrix4x4::identity(), material);
-        let sphere2 = Sphere::new(Matrix4x4::scaling(0.5, 0.5, 0.5), Material::default());
+        let sphere1 = Shape::sphere(Matrix4x4::identity(), material);
+        let sphere2 = Shape::sphere(Matrix4x4::scaling(0.5, 0.5, 0.5), Material::default());
 
         World::new()
             .add_light(light)

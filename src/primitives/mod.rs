@@ -18,7 +18,7 @@ pub use intersection_stats::IntersectionStats;
 pub use material::Material;
 pub use point_light::PointLight;
 pub use ray::Ray;
-pub use shape::Sphere;
+pub use shape::Shape;
 pub use world::World;
 
 // Tests
