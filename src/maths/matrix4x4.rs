@@ -246,23 +246,23 @@ impl Matrix4x4 {
     }
 
     pub fn rotate_x(&self, radians: f64) -> Matrix4x4 {
-        *self * Self::rotation_x(radians)
+        Self::rotation_x(radians) * *self
     }
 
     pub fn rotate_y(&self, radians: f64) -> Matrix4x4 {
-        *self * Self::rotation_y(radians)
+        Self::rotation_y(radians) * *self
     }
 
     pub fn rotate_z(&self, radians: f64) -> Matrix4x4 {
-        *self * Self::rotation_z(radians)
+        Self::rotation_z(radians) * *self
     }
 
     pub fn scale(&self, x: f64, y: f64, z: f64) -> Matrix4x4 {
-        *self * Self::scaling(x, y, z)
+        Self::scaling(x, y, z) * *self
     }
 
     pub fn translate(&self, x: f64, y: f64, z: f64) -> Matrix4x4 {
-        *self * Self::translation(x, y, z)
+        Self::translation(x, y, z) * *self
     }
 }
 
@@ -274,6 +274,8 @@ impl PartialEq for Matrix4x4 {
 
 impl Mul for Matrix4x4 {
     type Output = Self;
+
+    #[allow(clippy::op_ref)]
     fn mul(self, rhs: Matrix4x4) -> Matrix4x4 {
         self * &rhs
     }

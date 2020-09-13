@@ -9,27 +9,23 @@ use primitives::{Camera, Material, PointLight, Shape, World};
 const PI_2: f64 = std::f64::consts::FRAC_PI_2;
 
 fn left_wall() -> Shape {
-    let transform = Matrix4x4::translation(-3.0, 0.0, 0.0).rotate_z(PI_2);
+    let transform = Matrix4x4::rotation_z(PI_2).translate(-3.0, 0.0, 0.0);
 
     let mut material = Material::default();
     material.color = Color::red();
     material.specular = 0.0;
 
-    let wall = Shape::plane(transform, material);
-
-    wall
+    Shape::plane(transform, material)
 }
 
 fn right_wall() -> Shape {
-    let transform = Matrix4x4::translation(3.0, 0.0, 0.0).rotate_z(PI_2);
+    let transform = Matrix4x4::rotation_z(PI_2).translate(3.0, 0.0, 0.0);
 
     let mut material = Material::default();
     material.color = Color::blue();
     material.specular = 0.0;
 
-    let wall = Shape::plane(transform, material);
-
-    wall
+    Shape::plane(transform, material)
 }
 
 fn main() {
@@ -41,7 +37,7 @@ fn main() {
     let left_wall = left_wall();
     let right_wall = right_wall();
     let back_wall = Shape::plane(
-        Matrix4x4::translation(0.0, 0.0, 6.0).rotate_x(PI_2),
+        Matrix4x4::rotation_x(PI_2).translate(0.0, 0.0, 6.0),
         floor_mat,
     );
 
@@ -56,7 +52,7 @@ fn main() {
     let middle = Shape::sphere(middle_transform, middle_mat);
 
     // Create right
-    let right_transform = Matrix4x4::translation(1.5, 0.5, -0.5).scale(0.5, 0.5, 0.5);
+    let right_transform = Matrix4x4::scaling(0.5, 0.5, 0.5).translate(1.5, 0.5, -0.5);
     let mut right_mat = Material::default();
     right_mat.color = Color::new(0.5, 1.0, 0.1);
     right_mat.diffuse = 0.7;
@@ -64,7 +60,7 @@ fn main() {
     let right = Shape::sphere(right_transform, right_mat);
 
     // Create left
-    let left_translation = Matrix4x4::translation(-1.5, 0.33, -0.75).scale(0.33, 0.33, 0.33);
+    let left_translation = Matrix4x4::scaling(0.33, 0.33, 0.33).translate(-1.5, 0.33, -0.75);
     let mut left_mat = Material::default();
     left_mat.color = Color::new(1.0, 0.8, 0.1);
     left_mat.diffuse = 0.7;
@@ -86,7 +82,7 @@ fn main() {
 
     // quality 1 == 128 * 128
     // quality 4 == 1024 * 1024
-    let quality_multiplier = 4;
+    let quality_multiplier = 2;
     let (width, height) = (
         128 * 2i32.pow(quality_multiplier),
         128 * 2i32.pow(quality_multiplier),

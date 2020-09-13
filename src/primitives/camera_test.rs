@@ -47,7 +47,7 @@ fn constructing_a_ray_through_a_corner_of_the_canvas() {
 #[test]
 fn constructing_a_ray_when_the_camera_is_transformed() {
     let camera_translation =
-        Matrix4x4::rotation_y(std::f64::consts::FRAC_PI_4).translate(0.0, -2.0, 5.0);
+        Matrix4x4::translation(0.0, -2.0, 5.0).rotate_y(std::f64::consts::FRAC_PI_4);
     let c = Camera::new(201, 101, FRAC_PI_2, camera_translation);
     let r = c.ray_for_pixel(100, 50);
     assert_eq!(r.origin(), Point::new(0.0, 2.0, -5.0));

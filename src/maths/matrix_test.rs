@@ -395,9 +395,9 @@ fn chained_transformations_must_be_applied_in_reverse_order() {
 fn chain_transformation_using_fluent_api() {
     let p = Tuple::point(1.0, 0.0, 1.0);
     let t = Matrix4x4::identity()
-        .translate(10.0, 5.0, 7.0)
         .scale(5.0, 5.0, 5.0)
-        .rotate_x(std::f64::consts::PI / 2.0);
+        .rotate_x(std::f64::consts::PI / 2.0)
+        .translate(10.0, 5.0, 7.0);
     assert_eq!(t * p, Tuple::point(15.0, 0.0, 7.0));
 }
 

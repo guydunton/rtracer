@@ -30,7 +30,7 @@ impl Material {
 
     pub fn lighting(
         &self,
-        lights: &Vec<PointLight>,
+        lights: &[PointLight],
         position: Point,
         eyev: Vector,
         normalv: Vector,
