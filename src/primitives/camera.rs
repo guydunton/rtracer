@@ -1,5 +1,5 @@
 use super::{world::WorldImpl, Ray};
-use crate::canvas::{Canvas, Color};
+use crate::image::{Canvas, Color};
 use crate::maths::{Matrix4x4, Point};
 
 use rayon::prelude::*;
@@ -94,8 +94,7 @@ impl Camera {
         let mut image = Canvas::new(self.width, self.height);
 
         let points: Vec<(i32, i32)> = (0..self.height)
-            .into_iter()
-            .map(|row| (0..self.width).into_iter().map(move |col| (row, col)))
+            .map(|row| (0..self.width).map(move |col| (row, col)))
             .flatten()
             .collect();
 

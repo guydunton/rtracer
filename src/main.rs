@@ -1,8 +1,8 @@
-mod canvas;
+mod image;
 mod maths;
 mod primitives;
 
-use canvas::{save_canvas, Color};
+use image::{save_canvas, Color};
 use maths::{Matrix4x4, Point, Vector};
 use primitives::{Camera, Material, PointLight, Shape, World};
 

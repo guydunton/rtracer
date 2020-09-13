@@ -10,7 +10,7 @@ pub struct Intersection {
 
 impl Intersection {
     pub fn new(t: f64, shape: Shape) -> Intersection {
-        if t == std::f64::NAN {
+        if t.is_nan() {
             panic!("Intersection does not support NaN t values");
         }
         Intersection { t, shape }
@@ -28,9 +28,8 @@ impl Intersection {
         // Sort by t value
         intersections.sort_unstable_by(|a, b| a.t().partial_cmp(&b.t()).unwrap());
 
-        // Exclude all the t values < 0
-        // return the first value left, if any
-        intersections.into_iter().filter(|a| a.t() >= 0.0).nth(0)
+        // Get the first t value < 0
+        intersections.into_iter().find(|a| a.t() >= 0.0)
     }
 
     pub fn prepare_computations(&self, ray: Ray) -> IntersectionStats {

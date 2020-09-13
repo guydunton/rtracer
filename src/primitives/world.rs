@@ -1,6 +1,6 @@
 use super::{Intersection, IntersectionStats, Material, PointLight, Ray, Shape};
 use crate::{
-    canvas::Color,
+    image::Color,
     maths::{Matrix4x4, Point, Vector},
 };
 
@@ -46,7 +46,7 @@ impl WorldImpl {
     }
 
     pub fn color_at(&self, ray: Ray) -> Color {
-        let intersections = self.ray_intersects(ray.clone());
+        let intersections = self.ray_intersects(ray);
 
         let hit = Intersection::hit(intersections);
 
