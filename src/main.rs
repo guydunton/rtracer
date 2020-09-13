@@ -15,9 +15,7 @@ fn left_wall() -> Shape {
     material.color = Color::red();
     material.specular = 0.0;
 
-    let wall = Shape::plane(transform, material);
-
-    wall
+    Shape::plane(transform, material)
 }
 
 fn right_wall() -> Shape {
@@ -27,9 +25,7 @@ fn right_wall() -> Shape {
     material.color = Color::blue();
     material.specular = 0.0;
 
-    let wall = Shape::plane(transform, material);
-
-    wall
+    Shape::plane(transform, material)
 }
 
 fn main() {

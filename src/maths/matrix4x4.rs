@@ -274,6 +274,8 @@ impl PartialEq for Matrix4x4 {
 
 impl Mul for Matrix4x4 {
     type Output = Self;
+
+    #[allow(clippy::op_ref)]
     fn mul(self, rhs: Matrix4x4) -> Matrix4x4 {
         self * &rhs
     }
