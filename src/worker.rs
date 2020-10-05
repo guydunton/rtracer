@@ -32,12 +32,12 @@ impl<R> Worker<R> {
             let chunks = state.chunks(chunk_size);
             for chunk in chunks {
                 // Check to see whether we continue the loop
-                if let Ok(_) = finish_receive.try_recv() {
+                if finish_receive.try_recv().is_ok() {
                     break;
                 }
 
                 let this_chunk: Vec<(S, Sender<R>)> =
-                    chunk.into_iter().map(|i| (i.clone(), tx.clone())).collect();
+                    chunk.iter().map(|i| (i.clone(), tx.clone())).collect();
 
                 // iterate over each of the parts using rayon
                 this_chunk.into_par_iter().for_each(|(item, tsender)| {
