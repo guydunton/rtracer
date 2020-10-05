@@ -1,8 +1,5 @@
-use super::{
-    super::{Material, PointLight, Shape, World},
-    Intersection, Ray,
-};
-use crate::{Color, Matrix4x4, Point, Vector};
+use super::{Intersection, Material, PointLight, Ray, Shape, World};
+use crate::{image::Color, Matrix4x4, Point, Vector};
 
 #[test]
 fn creating_a_world() {

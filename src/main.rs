@@ -1,93 +1,29 @@
+mod cornell_box;
 mod image;
 mod maths;
 mod primitives;
+mod worker;
 
-use image::{save_canvas, Color};
+use cornell_box::create_cornell_box;
+use image::{save_canvas, Canvas};
 use maths::{Matrix4x4, Point, Vector};
-use primitives::{Camera, Material, PointLight, Shape, World};
-
-const PI_2: f64 = std::f64::consts::FRAC_PI_2;
-
-fn left_wall() -> Shape {
-    let transform = Matrix4x4::rotation_z(PI_2).translate(-3.0, 0.0, 0.0);
-
-    let mut material = Material::default();
-    material.color = Color::red();
-    material.specular = 0.0;
-
-    Shape::plane(transform, material)
-}
-
-fn right_wall() -> Shape {
-    let transform = Matrix4x4::rotation_z(PI_2).translate(3.0, 0.0, 0.0);
-
-    let mut material = Material::default();
-    material.color = Color::blue();
-    material.specular = 0.0;
-
-    Shape::plane(transform, material)
-}
+use minifb::{Key, Window, WindowOptions};
+use primitives::Camera;
+use rand::{seq::SliceRandom, thread_rng};
+use worker::{Worker, WorkerState};
 
 fn main() {
-    // Create floor
-    let mut floor_mat = Material::default();
-    floor_mat.specular = 0.0;
-    let floor = Shape::plane(Matrix4x4::identity(), floor_mat);
-
-    let left_wall = left_wall();
-    let right_wall = right_wall();
-    let back_wall = Shape::plane(
-        Matrix4x4::rotation_x(PI_2).translate(0.0, 0.0, 6.0),
-        floor_mat,
-    );
-
-    let ceiling = Shape::plane(Matrix4x4::translation(0.0, 5.0, 0.0), floor_mat);
-
-    // Create middle
-    let middle_transform = Matrix4x4::translation(-0.5, 1.0, 0.5);
-    let mut middle_mat = Material::default();
-    middle_mat.color = Color::new(0.1, 1.0, 0.5);
-    middle_mat.diffuse = 0.7;
-    middle_mat.specular = 0.3;
-    let middle = Shape::sphere(middle_transform, middle_mat);
-
-    // Create right
-    let right_transform = Matrix4x4::scaling(0.5, 0.5, 0.5).translate(1.5, 0.5, -0.5);
-    let mut right_mat = Material::default();
-    right_mat.color = Color::new(0.5, 1.0, 0.1);
-    right_mat.diffuse = 0.7;
-    right_mat.specular = 0.3;
-    let right = Shape::sphere(right_transform, right_mat);
-
-    // Create left
-    let left_translation = Matrix4x4::scaling(0.33, 0.33, 0.33).translate(-1.5, 0.33, -0.75);
-    let mut left_mat = Material::default();
-    left_mat.color = Color::new(1.0, 0.8, 0.1);
-    left_mat.diffuse = 0.7;
-    left_mat.specular = 0.3;
-    let left = Shape::sphere(left_translation, left_mat);
-
-    // Create world
-    let world = World::new()
-        .add_light(PointLight::new(Point::new(0.0, 4.2, 0.0), Color::white()))
-        .add_object(floor)
-        .add_object(left_wall)
-        .add_object(right_wall)
-        .add_object(back_wall)
-        .add_object(ceiling)
-        .add_object(middle)
-        .add_object(right)
-        .add_object(left)
-        .generate();
+    let world = create_cornell_box().generate();
 
     // quality 1 == 128 * 128
     // quality 4 == 1024 * 1024
-    let quality_multiplier = 2;
+    let quality_multiplier = 3;
     let (width, height) = (
         128 * 2i32.pow(quality_multiplier),
         128 * 2i32.pow(quality_multiplier),
     );
 
+    // Create camera
     let view_transform = Matrix4x4::view(
         Point::new(0.0, 2.8, -10.0),
         Point::new(0.0, 2.0, 0.0),
@@ -95,6 +31,62 @@ fn main() {
     );
     let camera = Camera::new(width, height, std::f64::consts::FRAC_PI_4, view_transform);
 
-    let canvas = camera.render(world);
-    save_canvas(canvas, "out.png".to_owned()).unwrap();
+    // Generate all the points to render
+    let mut points: Vec<(i32, i32)> = (0..height)
+        .map(|row| (0..width).map(move |col| (row, col)))
+        .flatten()
+        .collect();
+
+    // Shuffle all the points
+    let mut rng = thread_rng();
+    points.shuffle(&mut rng);
+
+    // Create the window
+    let mut window = Window::new(
+        "RTracer - ESC to exit",
+        width as usize,
+        height as usize,
+        WindowOptions::default(),
+    )
+    .expect("Failed to create window");
+    window.limit_update_rate(Some(std::time::Duration::from_micros(16600)));
+
+    // Start rendering all the colors in another thread
+    let worker = Worker::new(
+        points,
+        move |(row, col)| {
+            let ray = camera.ray_for_pixel(col, row);
+            ((row, col), world.color_at(ray))
+        },
+        width as usize,
+    );
+
+    // Create the buffers where the pixels will go once rendered
+    let mut buffer = vec![0u32; (width * height) as usize];
+    let mut canvas = Canvas::new(width, height);
+
+    let mut saved = false; // Make sure we only save once
+
+    while window.is_open() && !window.is_key_down(Key::Escape) {
+        // Pull the new pixels fr
+        match worker.fetch() {
+            WorkerState::Values(vals) => vals.into_iter().for_each(|((row, col), color)| {
+                buffer[(col + row * width) as usize] = color.to_u32();
+                canvas.write_pixel(col, row, color);
+            }),
+            WorkerState::Complete => {
+                if !saved {
+                    // Save the buffer to a canvas
+                    save_canvas(&canvas, "out.png".to_owned()).unwrap();
+                    saved = true;
+                }
+            }
+        }
+
+        window
+            .update_with_buffer(&buffer, width as usize, height as usize)
+            .expect("Failed to update the window with buffer");
+    }
+
+    worker.finish();
 }

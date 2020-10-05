@@ -3,7 +3,7 @@ use std::fs::File;
 use std::io::BufWriter;
 use std::path::Path;
 
-pub fn save_canvas(canvas: Canvas, path: String) -> Result<(), png::EncodingError> {
+pub fn save_canvas(canvas: &Canvas, path: String) -> Result<(), png::EncodingError> {
     // Create file & writer
     let out_path = Path::new(&path);
     let file = File::create(out_path)?;

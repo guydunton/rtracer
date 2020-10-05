@@ -27,6 +27,12 @@ jobs:
             target
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
+      - name: Update dependencies
+        if: ${{ runner.os == 'Linux' }}
+        run: |
+          sudo apt update -y
+          sudo apt install -y libxkbcommon-dev
+
       - name: Build
         run: cargo build --verbose
 
@@ -37,6 +43,10 @@ jobs:
     name: Check formatting using rustfmt
     runs-on: ubuntu-latest
     steps:
+      - name: Update dependencies
+        run: |
+          sudo apt update -y
+          sudo apt install -y libxkbcommon-dev
       - uses: actions/checkout@v1
       - run: rustup component add rustfmt
       - run: cargo fmt -- --check
@@ -45,6 +55,10 @@ jobs:
     name: Lint using Clippy
     runs-on: ubuntu-latest
     steps:
+      - name: Update dependencies
+        run: |
+          sudo apt update -y
+          sudo apt install -y libxkbcommon-dev
       - uses: actions/checkout@v1
       - run: rustup component add clippy
       - uses: actions-rs/clippy-check@v1
