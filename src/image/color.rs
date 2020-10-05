@@ -45,6 +45,14 @@ impl Color {
     pub fn black() -> Color {
         Color::new(0.0, 0.0, 0.0)
     }
+
+    pub fn to_u32(&self) -> u32 {
+        let r = (255.0 * self.r()) as u32;
+        let g = (255.0 * self.g()) as u32;
+        let b = (255.0 * self.b()) as u32;
+
+        (r << 16) | (g << 8) | b
+    }
 }
 
 impl PartialEq for Color {

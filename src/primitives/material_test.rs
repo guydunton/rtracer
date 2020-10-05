@@ -1,4 +1,6 @@
-use crate::{Color, Material, Point, PointLight, Vector};
+use crate::{image::Color, Point, Vector};
+
+use super::{Material, PointLight};
 
 fn round(v: f64) -> f64 {
     const SIG_FIGS: f64 = 100000.0;

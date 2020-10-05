@@ -1,5 +1,5 @@
-use super::Shape;
-use crate::{Material, Matrix4x4, Point, Vector};
+use super::{Material, Shape};
+use crate::{Matrix4x4, Point, Vector};
 use std::f64::consts::PI;
 
 fn round(v: f64) -> f64 {

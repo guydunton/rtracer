@@ -39,3 +39,17 @@ fn colors_can_be_multiplied_together() {
 
     assert_eq!(c1 * c2, Color::new(0.9, 0.2, 0.04));
 }
+
+#[test]
+fn color_can_be_converted_to_u32() {
+    let c = Color::new(1.0, 0.2, 0.4);
+
+    // There are 8 bits for each color component
+    let r = (255.0 * 1.0) as u32;
+    let g = (255.0 * 0.2) as u32;
+    let b = (255.0 * 0.4) as u32;
+
+    let result = (r << 16) | (g << 8) | b;
+
+    assert_eq!(c.to_u32(), result);
+}
