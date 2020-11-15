@@ -12,6 +12,17 @@ use primitives::Camera;
 use rand::{seq::SliceRandom, thread_rng};
 use worker::{Worker, WorkerState};
 
+fn resample_buffer(buffer: &mut Vec<u32>, canvas: &Canvas, screen_width: i32, screen_height: i32) {
+    let downsample = canvas.downsample(screen_width, screen_height);
+
+    for y in 0..downsample.height() {
+        for x in 0..downsample.width() {
+            let color = downsample.pixel_at(x, y);
+            buffer[(x + y * screen_width) as usize] = color.to_u32();
+        }
+    }
+}
+
 fn main() {
     let world = create_cornell_box().generate();
 
@@ -22,6 +33,8 @@ fn main() {
         128 * 2i32.pow(quality_multiplier),
         128 * 2i32.pow(quality_multiplier),
     );
+
+    let (screen_width, screen_height) = (512, 512);
 
     // Create camera
     let view_transform = Matrix4x4::view(
@@ -44,8 +57,8 @@ fn main() {
     // Create the window
     let mut window = Window::new(
         "RTracer - ESC to exit",
-        width as usize,
-        height as usize,
+        screen_width as usize,
+        screen_height as usize,
         WindowOptions::default(),
     )
     .expect("Failed to create window");
@@ -62,7 +75,7 @@ fn main() {
     );
 
     // Create the buffers where the pixels will go once rendered
-    let mut buffer = vec![0u32; (width * height) as usize];
+    let mut buffer = vec![0u32; (screen_width * screen_height) as usize];
     let mut canvas = Canvas::new(width, height);
 
     let mut saved = false; // Make sure we only save once
@@ -71,11 +84,13 @@ fn main() {
         // Pull the new pixels fr
         match worker.fetch() {
             WorkerState::Values(vals) => vals.into_iter().for_each(|((row, col), color)| {
-                buffer[(col + row * width) as usize] = color.to_u32();
-                canvas.write_pixel(col, row, color);
+                canvas.write_pixel(col, row, color.clone());
             }),
             WorkerState::Complete => {
                 if !saved {
+                    // Update the window
+                    window.set_title("RTracer - ESC to exit -- Finished");
+
                     // Save the buffer to a canvas
                     save_canvas(&canvas, "out.png".to_owned()).unwrap();
                     saved = true;
@@ -83,8 +98,11 @@ fn main() {
             }
         }
 
+        // Resample the buffer in the location which has now changed
+        resample_buffer(&mut buffer, &canvas, screen_width, screen_height);
+
         window
-            .update_with_buffer(&buffer, width as usize, height as usize)
+            .update_with_buffer(&buffer, screen_width as usize, screen_height as usize)
             .expect("Failed to update the window with buffer");
     }
 

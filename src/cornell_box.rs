@@ -42,10 +42,13 @@ pub fn create_cornell_box() -> World {
 
     let ceiling = Shape::plane(Matrix4x4::translation(0.0, 5.0, 0.0), floor_mat);
 
+    let orange = Color::new(1.0, 0.6, 0.2);
+
     // Create middle
     let middle_transform = Matrix4x4::translation(-0.5, 1.0, 0.5);
     let mut middle_mat = Material::default();
-    middle_mat.color = Color::new(0.1, 1.0, 0.5);
+    // middle_mat.color = Color::new(0.1, 1.0, 0.5);
+    middle_mat.color = orange;
     middle_mat.diffuse = 0.7;
     middle_mat.specular = 0.3;
     let middle = Shape::sphere(middle_transform, middle_mat);
@@ -53,7 +56,8 @@ pub fn create_cornell_box() -> World {
     // Create right
     let right_transform = Matrix4x4::scaling(0.5, 0.5, 0.5).translate(1.5, 0.5, -0.5);
     let mut right_mat = Material::default();
-    right_mat.color = Color::new(0.5, 1.0, 0.1);
+    //right_mat.color = Color::new(0.5, 1.0, 0.1);
+    right_mat.color = orange;
     right_mat.diffuse = 0.7;
     right_mat.specular = 0.3;
     let right = Shape::sphere(right_transform, right_mat);
@@ -61,7 +65,8 @@ pub fn create_cornell_box() -> World {
     // Create left
     let left_translation = Matrix4x4::scaling(0.33, 0.33, 0.33).translate(-1.5, 0.33, -0.75);
     let mut left_mat = Material::default();
-    left_mat.color = Color::new(1.0, 0.8, 0.1);
+    // left_mat.color = Color::new(1.0, 0.8, 0.1);
+    left_mat.color = orange;
     left_mat.diffuse = 0.7;
     left_mat.specular = 0.3;
     let left = Shape::sphere(left_translation, left_mat);
