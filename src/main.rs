@@ -84,7 +84,7 @@ fn main() {
         // Pull the new pixels fr
         match worker.fetch() {
             WorkerState::Values(vals) => vals.into_iter().for_each(|((row, col), color)| {
-                canvas.write_pixel(col, row, color.clone());
+                canvas.write_pixel(col, row, color);
             }),
             WorkerState::Complete => {
                 if !saved {
