@@ -300,6 +300,7 @@ impl Mul<&Matrix4x4> for Matrix4x4 {
     }
 }
 
+#[allow(clippy::suspicious_arithmetic_impl)] // Not sure I trust this one
 impl Mul<Tuple> for Matrix4x4 {
     type Output = Tuple;
     fn mul(self, rhs: Tuple) -> Tuple {
