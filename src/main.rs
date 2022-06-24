@@ -18,7 +18,7 @@ fn resample_buffer(buffer: &mut Vec<u32>, canvas: &Canvas, screen_width: i32, sc
     for y in 0..downsample.height() {
         for x in 0..downsample.width() {
             let color = downsample.pixel_at(x, y);
-            buffer[(x + y * screen_width) as usize] = color.to_u32();
+            buffer[(x + y * downsample.width()) as usize] = color.to_u32();
         }
     }
 }

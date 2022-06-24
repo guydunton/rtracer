@@ -2,12 +2,12 @@
 name = "rtracer"
 version = "0.1.0"
 authors = ["guydunton <guydunton@economist.com>"]
-edition = "2018"
+edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-png = "0.16.7"
+png = "0.17.5"
 rayon = "1.4.1"
-minifb = "0.19.1"
-rand = "0.7.3"
+minifb = "0.23.0"
+rand = "0.8.5"

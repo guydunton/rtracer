@@ -10,7 +10,7 @@ pub fn save_canvas(canvas: &Canvas, path: String) -> Result<(), png::EncodingErr
     let buf_writer = BufWriter::new(file);
     // Create png writer
     let mut encoder = png::Encoder::new(buf_writer, canvas.width() as u32, canvas.height() as u32);
-    encoder.set_color(png::ColorType::RGBA);
+    encoder.set_color(png::ColorType::Rgba);
     encoder.set_depth(png::BitDepth::Eight);
     let mut writer = encoder.write_header()?;
 
