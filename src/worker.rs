@@ -1,4 +1,5 @@
 use rayon::prelude::*;
+use std::fmt::Debug;
 use std::sync::mpsc;
 use std::sync::mpsc::{Receiver, Sender};
 use std::thread;
@@ -88,23 +89,21 @@ impl<R> Worker<R> {
 
 #[test]
 fn create_generator() {
-    use std::time::Duration;
-
     let vals = vec![1, 2, 3];
-    let worker = Worker::new(vals.clone(), |val| val + 1, 2);
-    thread::sleep(Duration::from_micros(1000));
-    let results = worker.fetch();
+    let worker = Worker::new(vals.clone(), |val| val + 1, 3);
 
-    match results {
-        WorkerState::Values(mut values) => {
-            values.sort();
-            assert_eq!(values, vec![2, 3, 4]);
-        }
-        WorkerState::Complete => {
-            panic!("Shouldn't be complete until the values are collected");
+    let mut results = Vec::new();
+
+    loop {
+        match worker.fetch() {
+            WorkerState::Values(mut vals) => results.append(&mut vals),
+            WorkerState::Complete => break,
         }
     }
 
-    let complete_msg = worker.fetch();
-    assert_eq!(complete_msg, WorkerState::Complete);
+    results.sort();
+    assert_eq!(results, vec![2, 3, 4]);
+
+    // Calling fetch again returns complete
+    assert_eq!(worker.fetch(), WorkerState::Complete);
 }
