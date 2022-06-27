@@ -6,6 +6,7 @@ mod camera;
 mod intersection;
 mod intersection_stats;
 mod material;
+mod pattern;
 mod point_light;
 mod ray;
 mod shape;
@@ -26,6 +27,8 @@ pub use world::World;
 mod camera_test;
 #[cfg(test)]
 mod material_test;
+#[cfg(test)]
+mod pattern_test;
 #[cfg(test)]
 mod ray_test;
 #[cfg(test)]
