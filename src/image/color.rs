@@ -8,7 +8,7 @@ pub struct Color {
 }
 
 impl Color {
-    pub fn new(red: f64, green: f64, blue: f64) -> Color {
+    pub const fn new(red: f64, green: f64, blue: f64) -> Color {
         Color {
             data: Tuple::new(red, green, blue, 0.0),
         }
@@ -26,23 +26,23 @@ impl Color {
         self.data.z()
     }
 
-    pub fn white() -> Color {
+    pub const fn white() -> Color {
         Color::new(1.0, 1.0, 1.0)
     }
 
-    pub fn red() -> Color {
+    pub const fn red() -> Color {
         Color::new(1.0, 0.0, 0.0)
     }
 
-    pub fn green() -> Color {
+    pub const fn green() -> Color {
         Color::new(0.0, 1.0, 0.0)
     }
 
-    pub fn blue() -> Color {
+    pub const fn blue() -> Color {
         Color::new(0.0, 0.0, 1.0)
     }
 
-    pub fn black() -> Color {
+    pub const fn black() -> Color {
         Color::new(0.0, 0.0, 0.0)
     }
 
