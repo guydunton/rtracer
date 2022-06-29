@@ -2,7 +2,7 @@ use crate::{
     image::Color,
     maths::Matrix4x4,
     maths::Point,
-    primitives::{Material, PointLight, Shape, World},
+    primitives::{Material, PointLight, Shape, StripePattern, World},
 };
 
 const PI_2: f64 = std::f64::consts::FRAC_PI_2;
@@ -30,6 +30,7 @@ fn right_wall() -> Shape {
 pub fn create_cornell_box() -> World {
     // Create floor
     let mut floor_mat = Material::default();
+    floor_mat.pattern = Some(StripePattern::new(Color::white(), Color::green()));
     floor_mat.specular = 0.0;
     let floor = Shape::plane(Matrix4x4::identity(), floor_mat);
 
@@ -51,6 +52,7 @@ pub fn create_cornell_box() -> World {
     middle_mat.color = orange;
     middle_mat.diffuse = 0.7;
     middle_mat.specular = 0.3;
+    middle_mat.pattern = Some(StripePattern::new(Color::white(), Color::blue()));
     let middle = Shape::sphere(middle_transform, middle_mat);
 
     // Create right

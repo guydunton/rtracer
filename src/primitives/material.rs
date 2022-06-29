@@ -1,4 +1,4 @@
-use super::PointLight;
+use super::{pattern::StripePattern, PointLight};
 use crate::{
     image::Color,
     maths::{Point, Vector},
@@ -11,6 +11,7 @@ pub struct Material {
     pub diffuse: f64,
     pub specular: f64,
     pub shininess: f64,
+    pub pattern: Option<StripePattern>,
 }
 
 impl Material {
@@ -21,11 +22,8 @@ impl Material {
             diffuse: 0.9,
             specular: 0.9,
             shininess: 200.0,
+            pattern: None,
         }
-    }
-
-    pub fn ambient_lighting(&self) -> Color {
-        self.color * self.ambient
     }
 
     pub fn lighting(
@@ -36,7 +34,7 @@ impl Material {
         normalv: Vector,
         in_shadow: bool,
     ) -> Color {
-        let ambient_color = self.ambient_lighting();
+        let ambient_color = self.color_at(&position) * self.ambient;
         lights
             .iter()
             .map(|light| self.internal_lighting(light, position, eyev, normalv, in_shadow))
@@ -51,8 +49,10 @@ impl Material {
         normalv: Vector,
         in_shadow: bool,
     ) -> Color {
+        let color = self.color_at(&position);
+
         // Combine the surface color with the light's color/intensity
-        let effective_color = self.color * light.intensity();
+        let effective_color = color * light.intensity();
 
         // Find the direction to the light source
         let lightv = (light.position() - position).normalize();
@@ -97,6 +97,12 @@ impl Material {
             // Add the three contributions together to get the final shading
             diffuse + specular
         }
+    }
+
+    fn color_at(&self, point: &Point) -> Color {
+        self.pattern
+            .map(|pattern| pattern.color_at(*point))
+            .unwrap_or(self.color)
     }
 }
 

@@ -1,4 +1,4 @@
-use crate::{image::Color, Point, Vector};
+use crate::{image::Color, primitives::pattern::StripePattern, Point, Vector};
 
 use super::{Material, PointLight};
 
@@ -87,4 +87,24 @@ fn lighting_with_the_surface_in_shadow() {
 
     let result = m.lighting(&vec![light], position, eyev, normalv, in_shadow);
     assert_eq!(result, Color::new(0.1, 0.1, 0.1));
+}
+
+#[test]
+fn lighting_with_a_pattern_applied() {
+    let mut m = Material::default();
+    m.ambient = 1.0;
+    m.diffuse = 0.0;
+    m.specular = 0.0;
+
+    m.pattern = Some(StripePattern::new(Color::white(), Color::black()));
+
+    let eyev = Vector::new(0.0, 0.0, -1.0);
+    let normalv = Vector::new(0.0, 0.0, -1.0);
+    let light = PointLight::new(Point::new(0.0, 0.0, -10.0), Color::new(1.0, 1.0, 1.0));
+
+    let col1 = m.lighting(&[light], Point::new(0.9, 0.0, 0.0), eyev, normalv, false);
+    let col2 = m.lighting(&[light], Point::new(1.1, 0.0, 0.0), eyev, normalv, false);
+
+    assert_eq!(col1, Color::new(1.0, 1.0, 1.0));
+    assert_eq!(col2, Color::new(0.0, 0.0, 0.0));
 }

@@ -17,6 +17,7 @@ pub use camera::Camera;
 pub use intersection::Intersection;
 pub use intersection_stats::IntersectionStats;
 pub use material::Material;
+pub use pattern::StripePattern;
 pub use point_light::PointLight;
 pub use ray::Ray;
 pub use shape::Shape;

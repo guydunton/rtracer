@@ -1,5 +1,6 @@
 use crate::{image::Color, maths::Point};
 
+#[derive(Copy, Clone, Debug)]
 pub struct StripePattern {
     col1: Color,
     col2: Color,
